@@ -27,7 +27,7 @@ const TEAM_ICONS = ['⚔️', '🌸', '🦁', '👑', '🔥', '💎'];
 // STATE
 // ============================================================
 let db = {
-  settings: { subtractOnWrong: false },
+  settings: { subtractOnWrong: true },
   questions: [], // each: { id, qnIndex (1-20), type, question, options, answer, points }
   teams: [...DEFAULT_TEAMS],
 };
@@ -471,6 +471,47 @@ function switchTurn() {
 // ============================================================
 // SCORE UI
 // ============================================================
+// ============================================================
+// SCORE DROP VISUAL FEEDBACK
+// ============================================================
+function flashScoreDrop(teamIndex, penaltyAmount) {
+  // Brief delay so the wrong-answer sound plays first, then show the visual
+  setTimeout(() => {
+    const scoreEl = document.getElementById(`score-team-${teamIndex}`);
+    if (!scoreEl) return;
+
+    // Flash the score red
+    scoreEl.style.transition = 'color 0.15s ease';
+    scoreEl.style.color = 'var(--color-cancel)';
+    setTimeout(() => {
+      scoreEl.style.color = '';
+      scoreEl.style.transition = '';
+    }, 900);
+
+    // Floating "−X pts" bubble
+    const bubble = document.createElement('div');
+    bubble.textContent = `−${penaltyAmount} pts`;
+    bubble.style.cssText = `
+      position: fixed;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: #FF3D3D;
+      text-shadow: 0 2px 8px rgba(255,61,61,0.6);
+      pointer-events: none;
+      z-index: 1000;
+      animation: scoreDrop 1.4s ease-out forwards;
+    `;
+
+    // Position near the score element
+    const rect = scoreEl.getBoundingClientRect();
+    bubble.style.left = `${rect.left + rect.width / 2 - 40}px`;
+    bubble.style.top = `${rect.top - 10}px`;
+    document.body.appendChild(bubble);
+    setTimeout(() => bubble.remove(), 1500);
+  }, 200);
+}
+
 function updateScoreUI() {
   const container = document.getElementById('game-team-panels');
   if (!container) return;
@@ -646,7 +687,15 @@ function submitAnswer(isCorrect) {
     playSound('wrong');
     if (playState.stats[teamIndex]) playState.stats[teamIndex].attempts++;
 
+    // Penalty = half the question's point value (rounded down)
+    const penalty = Math.floor(pts / 2);
+
     if (playState.isStealState) {
+      // Steal attempt wrong — apply penalty to the stealing team if subtractOnWrong enabled
+      if (db.settings.subtractOnWrong) {
+        playState.teams[teamIndex].score -= penalty;
+        flashScoreDrop(teamIndex, penalty);
+      }
       playState.answeredCells[cId] = { teamIndex: -1, pointsWon: 0, cancelled: false };
       playState.isStealState = false;
       playState.currentTeamIndex = (playState.originalTeamIndex + 1) % playState.teams.length;
@@ -659,7 +708,9 @@ function submitAnswer(isCorrect) {
       }, 1800);
     } else {
       if (db.settings.subtractOnWrong) {
-        playState.teams[teamIndex].score = Math.max(0, playState.teams[teamIndex].score - pts);
+        // Subtract half the question value — score CAN go negative
+        playState.teams[teamIndex].score -= penalty;
+        flashScoreDrop(teamIndex, penalty);
       }
       playState.answeredCells[cId] = { teamIndex: -1, pointsWon: 0, cancelled: false };
       updateScoreUI();
