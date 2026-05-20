@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An interactive Bible quiz game for church kids based on the Book of Daniel. Admin configuration, live scores, Boys vs Girls team gameplay, and fun visual elements.">
+  <title>Daniel Quiz - Interactive Bible Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Canvas for celebration confetti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div id="app-container">
+
+    <!-- ===== HEADER ===== -->
+    <header class="app-header">
+      <div class="logo-container">
+        <span class="logo-crown">👑</span>
+        <h1 class="logo-text">DANIEL <span class="gold-text">QUIZ</span></h1>
+      </div>
+      <div class="header-actions">
+        <button id="btn-theme-toggle" class="btn btn-icon" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
+          <span id="theme-icon">🌙</span>
+        </button>
+        <button id="btn-sound-toggle" class="btn btn-icon" title="Toggle Sound">
+          <span id="sound-icon">🔊</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== SCREEN CONTAINER ===== -->
+    <main id="screen-container">
+
+      <!-- ========================================
+           SCREEN 1: DASHBOARD
+           ======================================== -->
+      <section id="screen-dashboard" class="screen active">
+        <div class="hero-card glass-panel">
+          <div class="hero-badge">SUNDAY SCHOOL SPECIAL</div>
+          <h2 class="hero-title">The Book of Daniel <span class="gold-text">Quiz Challenge</span></h2>
+          <p class="hero-subtitle">An epic showdown for church kids! Who knows the Book of Daniel best?</p>
+
+          <div class="dashboard-status-card" id="dashboard-status">
+            <div class="bold-text">⚠️ No questions configured yet!</div>
+            <p style="margin-top:5px; font-size:0.9rem; color:var(--color-text-muted);">Open the Admin Panel to set up your grid and add questions.</p>
+          </div>
+
+
+
+          <div class="dashboard-actions">
+            <button id="btn-go-admin" class="btn btn-secondary btn-large">
+              ⚙️ Admin Panel
+            </button>
+            <button id="btn-start-game" class="btn btn-primary btn-large" disabled>
+              🎮 Start Game
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================
+           SCREEN 2: ADMIN PANEL
+           ======================================== -->
+      <section id="screen-admin" class="screen">
+        <div class="admin-header-row">
+          <div>
+            <h2 class="section-title" style="border:none; margin:0; font-size:1.6rem;">⚙️ Admin Panel</h2>
+            <p style="color: var(--color-text-muted); font-size:0.9rem; margin-top:4px;">Build your quiz board and add questions.</p>
+          </div>
+          <button id="btn-admin-back" class="btn btn-secondary">← Back to Home</button>
+        </div>
+
+        <div class="admin-grid-layout">
+
+          <!-- LEFT SIDEBAR: SETTINGS -->
+          <aside class="glass-panel admin-sidebar">
+
+            <h3 class="section-title">📐 Grid Configuration</h3>
+
+            <div class="form-group">
+              <label for="grid-total-questions">Total Questions to Create</label>
+              <input type="number" id="grid-total-questions" value="10" min="1" max="100" placeholder="e.g. 25">
+            </div>
+
+            <div class="form-group">
+              <label for="grid-columns">Point Values per Column (comma-separated)</label>
+              <input type="text" id="grid-columns" value="100,200,300,400,500" placeholder="e.g. 100,200,300,400,500">
+            </div>
+            <div class="form-group">
+              <label for="grid-rows">Number of Rows</label>
+              <input type="number" id="grid-rows" value="2" min="1" max="15">
+            </div>
+            <p class="small-text" id="grid-calc-hint" style="color:var(--color-text-muted); margin-bottom:8px;">Grid: 5 cols × 2 rows = 10 slots</p>
+            <button id="btn-update-grid" class="btn btn-secondary btn-block">
+              🔄 Apply Grid Settings
+            </button>
+
+            <hr class="divider">
+
+            <h3 class="section-title">⚖️ Game Rules</h3>
+            <div class="form-group-checkbox">
+              <input type="checkbox" id="settings-subtract">
+              <label for="settings-subtract">Subtract points on wrong answer</label>
+            </div>
+
+            <hr class="divider">
+
+            <h3 class="section-title">👥 Teams Setup</h3>
+            <div class="form-group" style="margin-bottom: 12px; display: flex; flex-direction: row; align-items: center; gap: 12px;">
+              <label for="setup-team-count" style="margin: 0; font-size: 0.9rem; white-space: nowrap;">Number of Teams:</label>
+              <input type="number" id="setup-team-count" value="2" min="2" max="6" style="width: 80px; padding: 6px 10px; margin: 0; background: var(--color-bg-alt); border: 1px solid var(--color-border); color: #fff;">
+            </div>
+            <div id="dynamic-team-inputs" class="team-inputs-grid" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;">
+              <!-- Dynamically populated team name inputs -->
+            </div>
+
+            <hr class="divider">
+
+            <h3 class="section-title">💾 Database</h3>
+            <p class="small-text" style="margin-bottom:10px; color: var(--color-text-muted);">Save, export, or import your questions.</p>
+            <div class="admin-db-actions">
+              <button id="btn-export-json" class="btn btn-secondary btn-block">📤 Export JSON</button>
+              <div class="file-upload-wrapper">
+                <button class="btn btn-secondary btn-block">📥 Import JSON</button>
+                <input type="file" id="import-json-file" accept=".json">
+              </div>
+              <button id="btn-clear-db" class="btn btn-danger btn-block admin-footer-btn">🗑️ Clear All Questions</button>
+            </div>
+          </aside>
+
+          <!-- RIGHT: GRID + EDITOR -->
+          <div class="admin-main">
+
+            <!-- Grid Stats Bar -->
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <span id="admin-grid-stats" class="badge badge-gold">Grid: 5×5 (25 slots)</span>
+              <span id="admin-q-count" class="badge">Questions: 0</span>
+            </div>
+
+            <!-- Interactive Grid -->
+            <div class="admin-grid-scroll-wrapper">
+              <div id="admin-interactive-grid" class="game-board-table"></div>
+            </div>
+
+            <!-- Question Editor (hidden until cell selected) -->
+            <div id="admin-question-editor" class="glass-panel question-editor-card hidden">
+              <div class="editor-header">
+                <h3 id="editor-cell-title" class="gold-text">📝 Edit Question: 100-1</h3>
+                <button id="btn-close-editor" class="btn-close" title="Close">✕</button>
+              </div>
+
+              <form id="question-form">
+                <div class="form-group">
+                  <label for="q-type">Question Type</label>
+                  <select id="q-type">
+                    <option value="mcq">Multiple Choice (MCQ)</option>
+                    <option value="fill">Fill in the Blank</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="q-text">Question Text</label>
+                  <textarea id="q-text" rows="3" placeholder="Enter your question here..." required></textarea>
+                </div>
+
+                <!-- MCQ Options -->
+                <div id="mcq-options-container">
+                  <label style="font-weight:600; font-size:0.9rem; margin-bottom:8px; display:block;">Answer Options (select correct one)</label>
+                  <div id="mcq-options-list">
+                    <div class="mcq-option-input">
+                      <input type="radio" name="mcq-correct" value="0" id="radio-opt-0" checked>
+                      <input type="text" id="opt-0" placeholder="Option A" class="opt-text" required>
+                    </div>
+                    <div class="mcq-option-input">
+                      <input type="radio" name="mcq-correct" value="1" id="radio-opt-1">
+                      <input type="text" id="opt-1" placeholder="Option B" class="opt-text" required>
+                    </div>
+                    <div class="mcq-option-input">
+                      <input type="radio" name="mcq-correct" value="2" id="radio-opt-2">
+                      <input type="text" id="opt-2" placeholder="Option C" class="opt-text" required>
+                    </div>
+                    <div class="mcq-option-input">
+                      <input type="radio" name="mcq-correct" value="3" id="radio-opt-3">
+                      <input type="text" id="opt-3" placeholder="Option D" class="opt-text" required>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Fill Answer -->
+                <div id="fill-answer-container" class="form-group hidden">
+                  <label for="q-fill-answer">Correct Answer</label>
+                  <input type="text" id="q-fill-answer" placeholder="Type the correct answer...">
+                </div>
+
+                <div class="form-group">
+                  <label for="q-points">Points Value</label>
+                  <input type="number" id="q-points" value="100" min="1">
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" id="btn-delete-question" class="btn btn-danger" style="display:none;">🗑️ Delete</button>
+                  <button type="submit" class="btn btn-primary">💾 Save Question</button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================
+           SCREEN 3: GAME BOARD
+           ======================================== -->
+      <section id="screen-game" class="screen">
+
+        <!-- Top Bar: Teams + Turn -->
+        <div class="game-top-bar">
+          <div id="game-team-panels" class="game-team-panels-container">
+            <!-- Dynamically populated team cards -->
+          </div>
+
+          <!-- Turn Indicator -->
+          <div class="turn-announcer glass-panel">
+            <div class="turn-label">CURRENT TURN</div>
+            <div id="turn-display" class="turn-team">TEAM NAME</div>
+            <div id="steal-banner" class="steal-banner hidden">🔥 STEAL CHANCE!</div>
+          </div>
+        </div>
+
+        <!-- Game Layout: Sidebar Leaderboard + Main Grid -->
+        <div class="game-layout-container">
+          <!-- Left side: Game Board Grid -->
+          <div class="game-board-container">
+            <div id="game-board-grid" class="game-board-table"></div>
+          </div>
+
+          <!-- Right side: Real-time Leaderboard -->
+          <aside class="game-leaderboard-sidebar glass-panel">
+            <h3 class="section-title" style="margin-bottom: 12px; border: none; padding: 0; display: flex; align-items: center; gap: 8px;">
+              🏆 LEADERBOARD
+            </h3>
+            <div id="sidebar-leaderboard-list" class="leaderboard-list">
+              <!-- Dynamically populated live rankings -->
+            </div>
+          </aside>
+        </div>
+
+        <!-- Game Controls -->
+        <div class="game-controls">
+          <button id="btn-end-game" class="btn btn-danger">🏁 End Game</button>
+          <button id="btn-game-back-admin" class="btn btn-secondary">⚙️ Admin</button>
+        </div>
+
+      </section>
+
+      <!-- ========================================
+           SCREEN 4: WINNER
+           ======================================== -->
+      <section id="screen-winner" class="screen">
+        <div class="winner-card glass-panel">
+          <div class="winner-trophy">🏆</div>
+          <div class="winner-badge" id="winner-badge">WINNER!</div>
+          <h2 id="winner-team-name" class="winner-team-name gold-text">TEAM WINS!</h2>
+          <p id="winner-subtitle" class="hero-subtitle">Congratulations on an amazing performance!</p>
+
+          <div id="winner-standings-container" class="winner-standings-container">
+            <!-- Dynamically populated ranked placements (1st, 2nd, etc.) -->
+          </div>
+
+          <div id="winner-stats" class="winner-stats"></div>
+
+          <div class="winner-actions">
+            <button id="btn-play-again" class="btn btn-primary btn-large">🔁 Play Again</button>
+            <button id="btn-winner-home" class="btn btn-secondary btn-large">🏠 Home</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===== QUESTION MODAL ===== -->
+    <div id="modal-overlay" class="modal-overlay">
+      <div class="modal-content glass-panel animate-zoom">
+
+        <div class="modal-header">
+          <div class="modal-cell-info">
+            <span id="modal-cell-id" class="badge badge-gold">100 PTS</span>
+            <span id="modal-turn-status" class="modal-turn-status boys-turn">BOYS' TURN</span>
+          </div>
+          <div id="modal-steal-label" class="steal-chip hidden">🔥 STEAL!</div>
+        </div>
+
+        <div id="modal-question-text" class="question-text">
+          Who was thrown into the lions' den?
+        </div>
+
+        <!-- MCQ Options -->
+        <div id="modal-mcq-container" class="mcq-options-grid">
+          <button class="option-btn" data-index="0">
+            <span class="option-letter">A</span>
+            <span class="option-val">Daniel</span>
+          </button>
+          <button class="option-btn" data-index="1">
+            <span class="option-letter">B</span>
+            <span class="option-val">Moses</span>
+          </button>
+          <button class="option-btn" data-index="2">
+            <span class="option-letter">C</span>
+            <span class="option-val">Meshach</span>
+          </button>
+          <button class="option-btn" data-index="3">
+            <span class="option-letter">D</span>
+            <span class="option-val">Abednego</span>
+          </button>
+        </div>
+
+        <!-- Fill-in-the-blank -->
+        <div id="modal-fill-container" class="fill-container hidden">
+          <input type="text" id="modal-fill-input" placeholder="Type answer here..." autocomplete="off">
+        </div>
+
+        <!-- Correct Answer Reveal -->
+        <div id="modal-reveal-panel" class="reveal-panel hidden">
+          <div class="reveal-title">CORRECT ANSWER</div>
+          <div id="modal-correct-answer-text" class="reveal-value gold-text">Daniel</div>
+        </div>
+
+        <!-- Submit or Pass Buttons -->
+        <div class="modal-footer">
+          <button id="btn-modal-pass" class="btn btn-secondary">⏭️ PASS</button>
+          <button id="btn-modal-submit" class="btn btn-primary">💾 SUBMIT</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="app-footer-text">
+    &copy; 2026 Daniel Quiz &mdash; Perfect for ages 9–11
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
