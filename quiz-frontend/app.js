@@ -587,6 +587,12 @@ function loadDefaultQuiz() {
     }
   ]
 };
+  db = data;
+  saveDB();
+  loadDB();
+  renderAdminGrid();
+  alert('Default Book of Daniel questions loaded!');
+}
 
 // ============================================================
 // THEME
