@@ -8,9 +8,16 @@
 // ============================================================
 const GRID_COLS = 5; // 5 columns fixed
 const DEFAULT_TEAMS = [
-  { name: 'Lion', logo: 'lion.png' },
-  { name: 'Lioness', logo: 'lioness.png' }
+  { name: 'Lion', logo: 'public/lion.png' },
+  { name: 'Lioness', logo: 'public/lioness.png' }
 ];
+
+function assetPath(path) {
+  if (!path) return '';
+  if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('public/')) return path;
+  if (path === 'logo.png' || path === 'lion.png' || path === 'lioness.png') return `public/${path}`;
+  return path;
+}
 
 // Team colour palette (cycling)
 const TEAM_COLORS = [
@@ -35,11 +42,12 @@ let db = {
 
 let playState = {
   activeScreen: 'dashboard',
-  gameState: 'IDLE', // IDLE | QUESTION_LOADING | AWAITING_FIRST_ANSWER | AWAITING_STEAL | RESOLVED | LOCKED
-  phase: 'locked',   // locked | live | ended
+  gameState: 'IDLE', // IDLE | QUESTION_LOADING | AWAITING_FIRST_ANSWER | AWAITING_STEAL | RESOLVED
+  phase: 'live',   // live | ended
   teams: [],           // [{ name, score }]
   currentTeamIndex: 0,
   hasPassed: false,
+  stealAttempted: false,
   answeredCells: {},   // { "qn1": { teamIndex, pointsWon, cancelled } }
   currentCellId: null,
   currentQuestion: null,
@@ -56,12 +64,11 @@ function canInteract() {
 
 function transitionState(newState) {
   const validTransitions = {
-    'IDLE': ['QUESTION_LOADING', 'LOCKED'],
+    'IDLE': ['QUESTION_LOADING'],
     'QUESTION_LOADING': ['AWAITING_FIRST_ANSWER', 'IDLE'],
     'AWAITING_FIRST_ANSWER': ['RESOLVED', 'AWAITING_STEAL', 'IDLE'],
     'AWAITING_STEAL': ['RESOLVED', 'IDLE'],
-    'RESOLVED': ['IDLE'],
-    'LOCKED': []
+    'RESOLVED': ['IDLE']
   };
   if (validTransitions[playState.gameState] && validTransitions[playState.gameState].includes(newState)) {
     playState.gameState = newState;
@@ -71,7 +78,7 @@ function transitionState(newState) {
   return false;
 }
 
-function canOpenCell() { return playState.gameState === 'IDLE' && playState.phase === 'live'; }
+function canOpenCell() { return playState.gameState === 'IDLE' && playState.phase !== 'ended'; }
 function canAnswer() { return playState.gameState === 'AWAITING_FIRST_ANSWER' || playState.gameState === 'AWAITING_STEAL'; }
 
 
@@ -325,6 +332,7 @@ function saveGameState() {
     teams: playState.teams,
     currentTeamIndex: playState.currentTeamIndex,
     hasPassed: playState.hasPassed,
+    stealAttempted: playState.stealAttempted,
     answeredCells: playState.answeredCells,
     currentCellId: playState.currentCellId,
     currentQuestion: playState.currentQuestion,
@@ -339,11 +347,12 @@ function loadGameState() {
     try {
       const parsed = JSON.parse(stored);
       if (parsed && typeof parsed === 'object') {
-        playState.phase = parsed.phase ?? 'locked';
+        playState.phase = parsed.phase === 'ended' ? 'ended' : 'live';
         playState.gameState = parsed.gameState ?? 'IDLE';
         playState.teams = parsed.teams ?? [];
         playState.currentTeamIndex = parsed.currentTeamIndex ?? 0;
         playState.hasPassed = parsed.hasPassed ?? false;
+        playState.stealAttempted = parsed.stealAttempted ?? parsed.currentQuestion?.stealAttempted ?? false;
         playState.answeredCells = parsed.answeredCells ?? {};
         playState.currentCellId = parsed.currentCellId ?? null;
         playState.currentQuestion = parsed.currentQuestion ?? null;
@@ -368,6 +377,7 @@ function loadGameState() {
             const q = playState.currentQuestion;
             const gState = playState.gameState;
             const hPassed = playState.hasPassed;
+            const sAttempted = playState.stealAttempted;
             const cLocked = playState.cancelLocked;
             
             playState.gameState = 'IDLE';
@@ -375,11 +385,12 @@ function loadGameState() {
             
             playState.gameState = gState;
             playState.hasPassed = hPassed;
+            playState.stealAttempted = sAttempted;
             playState.cancelLocked = cLocked;
             
             if (playState.gameState === 'AWAITING_STEAL') {
               const stealPts = Math.floor(q.points / 2);
-              document.getElementById('modal-points-display').textContent = `Now worth ${stealPts} Points (Steal Phase)`;
+              document.getElementById('modal-points-display').textContent = `${stealPts} POINTS - STEAL`;
               
               const turnStatus = document.getElementById('modal-turn-status');
               const nextTeamIndex = playState.currentTeamIndex;
@@ -406,74 +417,16 @@ function loadGameState() {
 
 function updateGameStatusUI() {
   const badge = document.getElementById('game-status-badge');
-  const startBtn = document.getElementById('btn-admin-start-game');
-  const lockOverlay = document.getElementById('game-board-lock-overlay');
-  
   if (!badge) return;
-  
-  badge.classList.remove('badge-locked', 'badge-live', 'badge-ended');
-  
-  if (playState.phase === 'locked') {
-    badge.textContent = '🔒 LOCKED';
-    badge.classList.add('badge-locked');
-    if (startBtn) {
-      startBtn.textContent = '🚀 Start Game';
-      startBtn.disabled = false;
-    }
-    if (lockOverlay) {
-      lockOverlay.classList.remove('hidden');
-      const lockOverlayContent = lockOverlay.querySelector('.lock-overlay-content');
-      if (lockOverlayContent) {
-        lockOverlayContent.innerHTML = `
-          <div class="lock-icon">🔒</div>
-          <h3>Game Board Locked</h3>
-          <p>Waiting for the administrator to start the game from the Admin Panel.</p>
-          <button id="btn-overlay-go-admin" class="btn btn-secondary" style="margin-top: 15px;" type="button">⚙️ Open Admin Panel</button>
-        `;
-        const btnGoAdmin = document.getElementById('btn-overlay-go-admin');
-        if (btnGoAdmin) {
-          btnGoAdmin.addEventListener('click', () => {
-            playSound('click');
-            renderAdminGrid();
-            showScreen('admin');
-          });
-        }
-      }
-    }
-  } else if (playState.phase === 'live') {
+
+  badge.classList.remove('badge-live', 'badge-ended');
+
+  if (playState.phase === 'live') {
     badge.textContent = '🟢 LIVE';
     badge.classList.add('badge-live');
-    if (startBtn) {
-      startBtn.textContent = '🔄 Reset Game';
-      startBtn.disabled = false;
-    }
-    if (lockOverlay) lockOverlay.classList.add('hidden');
   } else if (playState.phase === 'ended') {
     badge.textContent = '🏁 ENDED';
     badge.classList.add('badge-ended');
-    if (startBtn) {
-      startBtn.textContent = '🚀 Restart Game';
-      startBtn.disabled = false;
-    }
-    if (lockOverlay) {
-      lockOverlay.classList.remove('hidden');
-      const lockOverlayContent = lockOverlay.querySelector('.lock-overlay-content');
-      if (lockOverlayContent) {
-        lockOverlayContent.innerHTML = `
-          <div class="lock-icon">🏆</div>
-          <h3>Game Over!</h3>
-          <p>The game has ended. View the Winner screen or reset the game to start over.</p>
-          <button id="btn-overlay-view-winner" class="btn btn-primary" style="margin-top: 15px;" type="button">🏆 View Winner Screen</button>
-        `;
-        const btnViewWinner = document.getElementById('btn-overlay-view-winner');
-        if (btnViewWinner) {
-          btnViewWinner.addEventListener('click', () => {
-            playSound('click');
-            showScreen('winner');
-          });
-        }
-      }
-    }
   }
 }
 
@@ -762,18 +715,18 @@ function loadDefaultQuiz() {
   "teams": [
     {
       "name": "Lion",
-      "logo": "lion.png"
+        "logo": "public/lion.png"
     },
     {
       "name": "Lioness",
-      "logo": "lioness.png"
+      "logo": "public/lioness.png"
     }
   ]
 };
   db = data;
   saveDB();
   loadDB();
-  playState.phase = 'locked';
+  playState.phase = 'live';
   playState.gameState = 'IDLE';
   resetPlayState();
   saveGameState();
@@ -1036,7 +989,7 @@ function updateScoreUI(updatedTeamIndex = -1) {
     panel.className = `dynamic-team-panel glass-panel ${isActive ? 'active-turn' : ''}`;
     panel.style.borderColor = isActive ? 'var(--color-gold)' : color.border;
 
-    const logoSrc = team.logo || (team.name === 'Lion' ? 'lion.png' : 'lioness.png');
+    const logoSrc = assetPath(team.logo || (team.name === 'Lion' ? 'public/lion.png' : 'public/lioness.png'));
     panel.innerHTML = `
       <img src="${logoSrc}" class="team-logo-circular" alt="${team.name}" />
       <div class="team-details">
@@ -1141,7 +1094,7 @@ function enableModalActionButtons() {
   if (btnSubmit) btnSubmit.disabled = false;
   
   const q = playState.currentQuestion;
-  const canPass = q && !playState.hasPassed && !q.stealAttempted;
+  const canPass = q && !playState.hasPassed && !playState.stealAttempted;
   if (btnPass) {
     btnPass.style.display = canPass ? 'inline-flex' : 'none';
     btnPass.disabled = !canPass;
@@ -1160,6 +1113,7 @@ function openQuestionModal(cId, q) {
   playState.currentCellId = cId;
   playState.currentQuestion = q;
   playState.hasPassed = false;
+  playState.stealAttempted = false;
   playState.cancelLocked = false;
 
   const overlay = document.getElementById('modal-overlay');
@@ -1168,13 +1122,13 @@ function openQuestionModal(cId, q) {
 
   const qnIndex = q.qnIndex || parseInt(cId.replace('qn', ''), 10);
   document.getElementById('modal-cell-id').textContent = qnLabel(qnIndex);
-  document.getElementById('modal-points-display').textContent = `This Question: ${q.points} Points`;
+  document.getElementById('modal-points-display').textContent = `${q.points} POINTS`;
   
   const turnStatus = document.getElementById('modal-turn-status');
   turnStatus.style.color = 'var(--color-gold)';
   turnStatus.style.borderColor = 'rgba(244,196,48,0.3)';
   const activeTeam = playState.teams[playState.currentTeamIndex];
-  turnStatus.textContent = `${activeTeam.name.toUpperCase()}'S TURN`;
+  turnStatus.textContent = `${activeTeam.name.toUpperCase()} TURN`;
 
   document.getElementById('modal-question-text').textContent = q.question;
 
@@ -1230,14 +1184,16 @@ function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
   playState.currentCellId = null;
   playState.currentQuestion = null;
-  transitionState('IDLE');
+  playState.hasPassed = false;
+  playState.stealAttempted = false;
+  playState.cancelLocked = false;
+  if (playState.phase !== 'ended') playState.gameState = 'IDLE';
 }
 
 // ============================================================
 // CANCEL QUESTION
 // ============================================================
 function cancelQuestion() {
-  if (!canInteract()) return;
   const cId = playState.currentCellId;
   if (!cId) return;
 
@@ -1245,6 +1201,7 @@ function cancelQuestion() {
   transitionState('RESOLVED');
   playState.answeredCells[cId] = { teamIndex: -2, pointsWon: 0, cancelled: true };
   document.getElementById('modal-turn-status').textContent = "Question Cancelled";
+  saveGameState();
   enableNextButton();
 }
 
@@ -1265,11 +1222,11 @@ function applyScore(teamIndex, points, isPenalty = false) {
   if (isPenalty) {
     playState.teams[teamIndex].score -= points;
     // Show red danger alert
-    triggerAlert(teamName, `-${points} Points`, 'lose');
+    queueScoreAlert(teamName, `-${points} Points`, 'lose');
   } else {
     playState.teams[teamIndex].score += points;
     // Show green success alert
-    triggerAlert(teamName, `+${points} Points`, 'gain');
+    queueScoreAlert(teamName, `+${points} Points`, 'gain');
   }
 }
 
@@ -1296,6 +1253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnNext.addEventListener('click', () => {
       if (!canInteract()) return;
       closeModal();
+      saveGameState();
       renderGameBoard();
       checkGameOver();
     });
@@ -1325,6 +1283,60 @@ function triggerAlert(teamName, text, type) {
   setTimeout(() => alertEl.remove(), 2600);
 }
 
+function queueScoreAlert(teamName, text, type) {
+  setTimeout(() => triggerAlert(teamName, text, type), 2300);
+}
+
+function triggerDanielCartoon(teamIndex, isCorrect) {
+  const team = playState.teams[teamIndex];
+  if (!team) return;
+
+  const color = TEAM_COLORS[teamIndex % TEAM_COLORS.length];
+  const overlay = document.createElement('div');
+  overlay.className = `daniel-cartoon-overlay ${isCorrect ? 'cartoon-correct' : 'cartoon-wrong'}`;
+  overlay.style.setProperty('--team-color', color.text);
+  overlay.style.setProperty('--team-bg', color.bg);
+  overlay.style.setProperty('--team-border', color.border);
+
+  const actionText = isCorrect ? 'Correct!' : 'Wrong!';
+  const actionClass = isCorrect ? 'lift-action' : 'bonk-action';
+  const logo = assetPath(team.logo || (teamIndex === 0 ? 'public/lion.png' : 'public/lioness.png'));
+
+  overlay.innerHTML = `
+    <div class="daniel-cartoon-card">
+      <div class="cartoon-stage ${actionClass}">
+        <div class="cartoon-daniel">
+          <div class="daniel-head"></div>
+          <div class="daniel-hair"></div>
+          <div class="daniel-body"></div>
+          <div class="daniel-arm daniel-arm-left"></div>
+          <div class="daniel-arm daniel-arm-right"></div>
+          <div class="daniel-leg daniel-leg-left"></div>
+          <div class="daniel-leg daniel-leg-right"></div>
+          <div class="daniel-label">DANIEL</div>
+          ${isCorrect ? '' : '<div class="cartoon-hammer"><span></span></div>'}
+        </div>
+        <div class="cartoon-person">
+          <div class="person-head"></div>
+          <div class="person-body">
+            <img src="${logo}" alt="${team.name}" />
+          </div>
+          <div class="person-arm person-arm-left"></div>
+          <div class="person-arm person-arm-right"></div>
+          <div class="person-leg person-leg-left"></div>
+          <div class="person-leg person-leg-right"></div>
+          <div class="person-team">${team.name}</div>
+        </div>
+        <div class="cartoon-burst">${isCorrect ? 'UP!' : 'BONK!'}</div>
+      </div>
+      <div class="cartoon-caption" style="color:${color.text};">${team.name} - ${actionText}</div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 2300);
+}
+
 function resolveAnswer(isCorrect) {
   const q = playState.currentQuestion;
   if (!q || !canAnswer()) return;
@@ -1335,12 +1347,12 @@ function resolveAnswer(isCorrect) {
 
   if (isCorrect) {
     applyScore(teamIndex, pts, false); // Safe scoring via controlled engine
+    triggerDanielCartoon(teamIndex, true);
     transitionState('RESOLVED');
     playSound('correct');
     triggerBurst();
 
     playState.answeredCells[cId] = { teamIndex, pointsWon: pts, cancelled: false };
-    q.status = 'resolved';
     if (playState.stats[teamIndex]) {
       playState.stats[teamIndex].correct++;
       playState.stats[teamIndex].attempts++;
@@ -1372,23 +1384,24 @@ function resolveAnswer(isCorrect) {
     playSound('wrong');
     if (playState.stats[teamIndex]) playState.stats[teamIndex].attempts++;
 
-    if (!playState.hasPassed && !q.stealAttempted) {
+    if (!playState.hasPassed && !playState.stealAttempted) {
       // First wrong -> Penalize and Steal
       const penalty = Math.floor(q.points / 2);
       applyScore(teamIndex, penalty, true); // Safe scoring via controlled engine
+      triggerDanielCartoon(teamIndex, false);
       transitionState('AWAITING_STEAL');
 
-      q.stealAttempted = true;
+      playState.stealAttempted = true;
       updateScoreUI(teamIndex);
       saveGameState();
       startStealPhase();
     } else {
       // Second wrong -> Penalize and Resolve
       applyScore(teamIndex, pts, true); // Safe scoring via controlled engine
+      triggerDanielCartoon(teamIndex, false);
       transitionState('RESOLVED');
 
       playState.answeredCells[cId] = { teamIndex: -1, pointsWon: 0, cancelled: false };
-      q.status = 'resolved';
 
       const turnStatus = document.getElementById('modal-turn-status');
       turnStatus.textContent = "Incorrect Answer";
@@ -1422,7 +1435,7 @@ function startStealPhase() {
 
   const q = playState.currentQuestion;
   const stealPts = Math.floor(q.points / 2);
-  document.getElementById('modal-points-display').textContent = `Now worth ${stealPts} Points (Steal Phase)`;
+  document.getElementById('modal-points-display').textContent = `${stealPts} POINTS - STEAL`;
   
   // Disable previously selected option if any
   document.querySelectorAll('.option-btn.selected').forEach(btn => btn.disabled = true);
@@ -1450,17 +1463,16 @@ function startStealPhase() {
 }
 
 function submitAnswer(isCorrect) {
-  if (!canInteract()) return;
   resolveAnswer(isCorrect);
 }
 
 function handlePass() {
-  if (!canInteract() || !canAnswer()) return;
+  if (!canAnswer()) return;
   const q = playState.currentQuestion;
-  if (!q || playState.hasPassed || q.stealAttempted) return;
+  if (!q || playState.hasPassed || playState.stealAttempted) return;
   playSound('pass');
 
-  q.stealAttempted = true;
+  playState.stealAttempted = true;
   transitionState('AWAITING_STEAL');
   saveGameState();
   startStealPhase();
@@ -1548,6 +1560,7 @@ function resetPlayState() {
   playState.teams.forEach(t => { t.score = 0; });
   playState.currentTeamIndex = 0;
   playState.hasPassed = false;
+  playState.stealAttempted = false;
   playState.answeredCells = {};
   playState.currentCellId = null;
   playState.currentQuestion = null;
@@ -1582,23 +1595,16 @@ document.getElementById('btn-go-admin-float').addEventListener('click', () => {
 // ============================================================
 document.getElementById('btn-start-game').addEventListener('click', () => {
   playSound('open');
-  if (playState.phase === 'locked') {
-    setupTeamsFromInputs();
-    resetPlayState();
-    renderGameBoard();
-    updateTurnUI();
-    updateScoreUI();
-    showScreen('game');
-  } else {
-    renderGameBoard();
-    updateTurnUI();
-    updateScoreUI();
-    if (playState.phase === 'ended') {
-      showScreen('winner');
-    } else {
-      showScreen('game');
-    }
-  }
+  setupTeamsFromInputs();
+  resetPlayState();
+  playState.phase = 'live';
+  playState.gameState = 'IDLE';
+  saveGameState();
+  updateGameStatusUI();
+  renderGameBoard();
+  updateTurnUI();
+  updateScoreUI();
+  showScreen('game');
 });
 
 // ============================================================
@@ -1660,15 +1666,20 @@ document.getElementById('import-json-file').addEventListener('change', e => {
       const parsed = JSON.parse(reader.result);
       if (parsed && typeof parsed === 'object') {
         db = {
-          settings: parsed.settings || { subtractOnWrong: false },
+          settings: {
+            subtractOnWrong: parsed.settings?.subtractOnWrong ?? true,
+            totalQuestions: parsed.settings?.totalQuestions ?? 20,
+            displayMode: parsed.settings?.displayMode ?? 'QUESTION_NUMBER'
+          },
           questions: parsed.questions || [],
           teams: (parsed.teams && Array.isArray(parsed.teams) && parsed.teams.length >= 2)
             ? parsed.teams
             : [...DEFAULT_TEAMS],
         };
         saveDB();
-        saveDB();
         document.getElementById('settings-subtract').checked = !!db.settings.subtractOnWrong;
+        document.getElementById('settings-total-questions').value = db.settings.totalQuestions;
+        document.getElementById('settings-display-mode').value = db.settings.displayMode;
         renderAdminGrid();
       }
     } catch (err) {
@@ -1681,9 +1692,9 @@ document.getElementById('import-json-file').addEventListener('change', e => {
 
 // Reset game scores (not questions)
 document.getElementById('btn-reset-game').addEventListener('click', () => {
-  if (confirm('Are you sure you want to reset all game scores and lock progress?')) {
+  if (confirm('Are you sure you want to reset all game scores and board progress?')) {
     playSound('click');
-    playState.phase = 'locked';
+    playState.phase = 'live';
     playState.gameState = 'IDLE';
     setupTeamsFromInputs();
     resetPlayState();
@@ -1695,53 +1706,9 @@ document.getElementById('btn-reset-game').addEventListener('click', () => {
   }
 });
 
-// Admin Gameplay Start / Reset control
-const btnAdminStartGame = document.getElementById('btn-admin-start-game');
-if (btnAdminStartGame) {
-  btnAdminStartGame.addEventListener('click', async () => {
-    if (!canInteract()) return;
-    
-    if (db.questions.length === 0) {
-      alert('No questions configured yet! Please add questions or load the default ones first.');
-      return;
-    }
-
-    if (playState.phase === 'locked') {
-      // Show global countdown overlay
-      await runCountdown();
-      
-      setupTeamsFromInputs();
-      resetPlayState();
-      
-      playState.phase = 'live';
-      playState.gameState = 'IDLE';
-      
-      saveGameState();
-      updateGameStatusUI();
-      renderGameBoard();
-      updateTurnUI();
-      updateScoreUI();
-      
-      showScreen('game');
-      playSound('open');
-    } else {
-      if (confirm('Are you sure you want to reset the current game? This will reset all scores and board progress.')) {
-        playState.phase = 'locked';
-        playState.gameState = 'IDLE';
-        resetPlayState();
-        saveGameState();
-        updateGameStatusUI();
-        renderGameBoard();
-        updateTurnUI();
-        updateScoreUI();
-        showScreen('dashboard');
-      }
-    }
-  });
-}
-
 // Clear all questions
 document.getElementById('btn-clear-db').addEventListener('click', () => {
+  if (!confirm('Clear all questions? This cannot be undone unless you import or reload a saved quiz.')) return;
   db.questions = [];
   saveDB();
   selectedAdminCellId = null;
@@ -1959,7 +1926,8 @@ loadGameState();
 renderAdminGrid();
 updateScoreUI();
 
-if (playState.phase === 'locked') {
+if (playState.phase !== 'ended') {
+  playState.phase = 'live';
   showScreen('dashboard');
 }
 
