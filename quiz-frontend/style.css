@@ -355,6 +355,7 @@ body {
   width: 2.5rem;
   height: 2.5rem;
   object-fit: contain;
+  border-radius: 50%;
   animation: logoFloat 3.5s ease-in-out infinite;
   display: block;
 }
