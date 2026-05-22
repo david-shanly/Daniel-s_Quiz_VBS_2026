@@ -1435,104 +1435,7 @@ function playWrongAnswerVideo(onClosed) {
   });
 }
 
-function playCorrectAnswerVideo(onClosed) {
-  const overlay = document.createElement('div');
-  overlay.className = 'correct-answer-video-overlay';
-  overlay.style.position = 'fixed';
-  overlay.style.inset = '0';
-  overlay.style.background = 'rgba(0, 0, 0, 0.95)';
-  overlay.style.zIndex = '9999';
-  overlay.style.display = 'flex';
-  overlay.style.flexDirection = 'column';
-  overlay.style.alignItems = 'center';
-  overlay.style.justifyContent = 'center';
-  overlay.style.backdropFilter = 'blur(12px)';
 
-  const videoContainer = document.createElement('div');
-  videoContainer.style.position = 'relative';
-  videoContainer.style.maxWidth = '85%';
-  videoContainer.style.maxHeight = '75%';
-  videoContainer.style.borderRadius = '24px';
-  videoContainer.style.overflow = 'hidden';
-  videoContainer.style.border = '6px solid var(--color-success)';
-  videoContainer.style.boxShadow = '0 0 50px rgba(74, 222, 128, 0.6)';
-  videoContainer.style.background = '#000';
-
-  const video = document.createElement('video');
-  video.src = 'correct_answer.mp4';
-  video.style.width = '100%';
-  video.style.height = '100%';
-  video.style.display = 'block';
-  video.autoplay = true;
-  video.controls = false;
-
-  const skipBtn = document.createElement('button');
-  skipBtn.textContent = '⏭️ Skip Video';
-  skipBtn.style.marginTop = '24px';
-  skipBtn.style.padding = '14px 36px';
-  skipBtn.style.fontSize = '1.3rem';
-  skipBtn.style.fontWeight = '800';
-  skipBtn.style.color = '#fff';
-  skipBtn.style.background = 'rgba(74, 222, 128, 0.2)';
-  skipBtn.style.border = '3px solid var(--color-success)';
-  skipBtn.style.borderRadius = 'var(--radius-pill)';
-  skipBtn.style.cursor = 'pointer';
-  skipBtn.style.transition = 'all 0.2s';
-  skipBtn.style.boxShadow = '0 0 15px rgba(74, 222, 128, 0.3)';
-
-  skipBtn.onmouseover = () => {
-    skipBtn.style.background = 'var(--color-success)';
-    skipBtn.style.boxShadow = '0 0 25px rgba(74, 222, 128, 0.8)';
-    skipBtn.style.transform = 'scale(1.05)';
-  };
-  skipBtn.onmouseout = () => {
-    skipBtn.style.background = 'rgba(74, 222, 128, 0.2)';
-    skipBtn.style.boxShadow = '0 0 15px rgba(74, 222, 128, 0.3)';
-    skipBtn.style.transform = 'scale(1)';
-  };
-
-  const closeOverlay = () => {
-    video.pause();
-    overlay.remove();
-    if (onClosed) onClosed();
-  };
-
-  video.onended = closeOverlay;
-  skipBtn.onclick = closeOverlay;
-
-  setTimeout(() => {
-    if (overlay.parentNode) {
-      closeOverlay();
-    }
-  }, 12000); // 12 seconds fallback
-
-  videoContainer.appendChild(video);
-  overlay.appendChild(videoContainer);
-  overlay.appendChild(skipBtn);
-  document.body.appendChild(overlay);
-
-  video.play().catch(err => {
-    console.warn('Autoplay failed, showing play button', err);
-    video.controls = true;
-    const playPrompt = document.createElement('div');
-    playPrompt.textContent = '▶️ Play Video';
-    playPrompt.style.position = 'absolute';
-    playPrompt.style.inset = '0';
-    playPrompt.style.background = 'rgba(0,0,0,0.5)';
-    playPrompt.style.color = '#fff';
-    playPrompt.style.fontSize = '2rem';
-    playPrompt.style.fontWeight = 'bold';
-    playPrompt.style.display = 'flex';
-    playPrompt.style.alignItems = 'center';
-    playPrompt.style.justifyContent = 'center';
-    playPrompt.style.cursor = 'pointer';
-    playPrompt.onclick = () => {
-      video.play();
-      playPrompt.remove();
-    };
-    videoContainer.appendChild(playPrompt);
-  });
-}
 
 // ============================================================
 // SCORING ENGINE
@@ -1732,42 +1635,41 @@ function resolveAnswer(isCorrect) {
   const pts = playState.hasPassed ? Math.floor(q.points / 2) : q.points;
 
   if (isCorrect) {
-    playCorrectAnswerVideo(() => {
-      transitionState('RESOLVED');
-      playSound('correct');
-      disableQuestionInputs();
+    transitionState('RESOLVED');
+    playSound('correct');
+    disableQuestionInputs();
 
-      applyScore(teamIndex, pts, false, true); // Safe scoring via controlled engine
-      triggerBurst();
-      updateScoreUI(teamIndex);
-      saveGameState();
+    applyScore(teamIndex, pts, false, true); // Safe scoring via controlled engine
+    triggerBurst();
+    updateScoreUI(teamIndex);
+    saveGameState();
 
-      playState.answeredCells[cId] = { teamIndex, pointsWon: pts, cancelled: false };
-      if (playState.stats[teamIndex]) {
-        playState.stats[teamIndex].correct++;
-        playState.stats[teamIndex].attempts++;
-      }
+    playState.answeredCells[cId] = { teamIndex, pointsWon: pts, cancelled: false };
+    if (playState.stats[teamIndex]) {
+      playState.stats[teamIndex].correct++;
+      playState.stats[teamIndex].attempts++;
+    }
 
-      const contentNode = document.querySelector('.modal-content');
-      contentNode.classList.remove('feedback-wrong');
-      contentNode.classList.add('feedback-correct');
+    const contentNode = document.querySelector('.modal-content');
+    contentNode.classList.remove('feedback-wrong');
+    contentNode.classList.add('feedback-correct');
 
-      document.getElementById('modal-correct-answer-text').textContent = q.answer;
-      document.getElementById('modal-reveal-panel').classList.remove('hidden');
-      
-      const turnStatus = document.getElementById('modal-turn-status');
-      turnStatus.textContent = "Correct Answer!";
-      turnStatus.style.color = "var(--color-success)";
-      turnStatus.style.borderColor = "var(--color-success)";
+    document.getElementById('modal-correct-answer-text').textContent = q.answer;
+    document.getElementById('modal-reveal-panel').classList.remove('hidden');
+    
+    const turnStatus = document.getElementById('modal-turn-status');
+    turnStatus.textContent = "Correct Answer!";
+    turnStatus.style.color = "var(--color-success)";
+    turnStatus.style.borderColor = "var(--color-success)";
 
-      playState.cancelLocked = true;
-      const btnCancel = document.getElementById('btn-modal-cancel');
-      if (btnCancel) btnCancel.disabled = true;
+    playState.cancelLocked = true;
+    const btnCancel = document.getElementById('btn-modal-cancel');
+    if (btnCancel) btnCancel.disabled = true;
 
-      saveGameState();
-      switchTurn();
-      enableNextButton();
-    });
+    saveGameState();
+    switchTurn();
+    enableNextButton();
+
   } else {
     playSound('wrong');
     if (playState.stats[teamIndex]) playState.stats[teamIndex].attempts++;
