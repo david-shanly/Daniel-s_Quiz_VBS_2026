@@ -11,9 +11,9 @@
 :root,
 [data-theme="dark"] {
   /* Backgrounds */
-  --bg-color: #07112B;
-  --bg-gradient: linear-gradient(145deg, #07112B 0%, #0E1F45 40%, #14285C 70%, #0D1B3E 100%);
-  --panel-bg: rgba(14, 28, 65, 0.78);
+  --bg-color: #030814;
+  --bg-gradient: linear-gradient(145deg, #030814 0%, #081229 40%, #0b1a3e 70%, #040a17 100%);
+  --panel-bg: rgba(8, 16, 40, 0.85);
   --panel-border: rgba(255, 255, 255, 0.09);
   --panel-border-active: rgba(244, 196, 48, 0.55);
   --header-bg: rgba(7, 17, 43, 0.92);
@@ -768,13 +768,23 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   cursor: pointer;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all var(--transition-fast);
+}
+
+.form-group-checkbox:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(244, 196, 48, 0.3);
 }
 
 .form-group-checkbox input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   accent-color: var(--color-gold);
   cursor: pointer;
   flex-shrink: 0;
@@ -782,9 +792,10 @@ body {
 
 .form-group-checkbox label {
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 0.85rem;
   cursor: pointer;
   color: var(--color-text-light);
+  margin: 0;
 }
 
 .divider {
@@ -856,7 +867,7 @@ body {
 /* Admin cells */
 .board-cell {
   background: var(--panel-bg);
-  border: 2.5px solid var(--cell-border);
+  border: 2.5px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-sm);
   min-height: 86px;
   display: flex;
@@ -865,6 +876,8 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-bounce);
+  font-weight: 900 !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
   padding: 8px 6px;
   position: relative;
   overflow: hidden;
@@ -1046,17 +1059,17 @@ body {
 
 .dynamic-team-panel.active-turn {
   border-color: var(--color-gold);
-  box-shadow: 0 0 24px rgba(244, 196, 48, 0.28);
-  animation: teamActivePulse 2s ease-in-out infinite alternate;
+  box-shadow: 0 0 30px rgba(244, 196, 48, 0.4);
+  animation: teamActivePulse 1.5s ease-in-out infinite alternate;
 }
 
 @keyframes teamActivePulse {
   from {
-    box-shadow: 0 0 12px rgba(244, 196, 48, 0.2);
+    box-shadow: 0 0 15px rgba(244, 196, 48, 0.3);
   }
 
   to {
-    box-shadow: 0 0 32px rgba(244, 196, 48, 0.5);
+    box-shadow: 0 0 40px rgba(244, 196, 48, 0.7);
   }
 }
 
@@ -1158,7 +1171,7 @@ body {
 /* Game cells — audience view */
 .game-cell-btn {
   background: var(--panel-bg);
-  border: 2.5px solid var(--cell-border);
+  border: 2.5px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-sm);
   color: var(--color-text-light);
   min-height: 114px;
@@ -1167,6 +1180,9 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all var(--transition-bounce);
+  font-weight: 900 !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
   transition: all var(--transition-bounce);
   padding: 12px 8px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
@@ -1298,8 +1314,8 @@ body {
 
 .leaderboard-score {
   font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 400;
+  font-size: 1.6rem;
+  font-weight: 800;
   color: var(--color-gold);
 }
 
@@ -2582,3 +2598,121 @@ body {
 .btn-hamburger-admin:active {
   transform: translateY(1px) scale(0.98);
 }
+
+/* ============================================================
+   ADVANCED GAME GRID UX
+   ============================================================ */
+
+/* 1. Staggered Cascading Entry Animation */
+.game-cell-btn {
+  position: relative;
+  overflow: hidden; /* For ripple effect */
+}
+/* 4. Premium Ripple Click Effect */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleAnim 0.4s ease-out;
+  background-color: rgba(255, 255, 255, 0.4);
+  width: 150px;
+  height: 150px;
+  margin-top: -75px;
+  margin-left: -75px;
+  pointer-events: none;
+}
+
+@keyframes rippleAnim {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   PREMIUM CONTROL SETTINGS UI
+   ============================================================ */
+.premium-controls-wrapper {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 16px;
+}
+
+.modern-select, .modern-input {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--bg-color);
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.modern-input { cursor: text; }
+.modern-select:focus, .modern-input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 2px rgba(244, 196, 48, 0.2);
+}
+
+.typography-format-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.color-picker-wrapper {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.color-picker-wrapper:hover {
+  transform: scale(1.1);
+  border-color: var(--color-gold);
+}
+.color-picker-wrapper input[type="color"] {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  border: none;
+}
+
+.default-color-toggle {
+  margin: 0;
+  margin-left: auto; /* Push to right */
+  background: rgba(244, 196, 48, 0.1);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(244, 196, 48, 0.2);
+  transition: all 0.2s;
+}
+.default-color-toggle:hover {
+  background: rgba(244, 196, 48, 0.15);
+}
+.default-color-toggle label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-gold-light);
+  margin: 0;
+  cursor: pointer;
+} 
+ 
+/* EMOJI STICKER ANIMATION */
+.emoji-sticker { position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; font-size: 10rem !important; z-index: 99999 !important; pointer-events: none !important; animation: emojiPop 1.5s ease-out forwards !important; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)) !important; display: block !important; visibility: visible !important; }
+@keyframes emojiPop { 0% { transform: translate(-50%, -50%) scale(0) rotate(-45deg); opacity: 0; } 20% { transform: translate(-50%, -50%) scale(1.2) rotate(10deg); opacity: 1; } 35% { transform: translate(-50%, -50%) scale(1) rotate(-5deg); opacity: 1; } 80% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; } 100% { transform: translate(-50%, -100%) scale(0.5); opacity: 0; } }

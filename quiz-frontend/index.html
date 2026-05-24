@@ -412,29 +412,33 @@
       <!-- Section 1: Grid Typography -->
       <div class="sidebar-section">
         <h4 class="sidebar-section-title">🎨 Grid Typography</h4>
-        <div class="form-group">
-          <label for="settings-grid-font">Grid Font Style</label>
-          <select id="settings-grid-font" style="padding: 8px 12px; font-size: 0.85rem; width: 100%;">
-            <option value="none">None (System Default)</option>
-            <option value="Fredoka One">Fredoka One (Default)</option>
-            <option value="Inter">Inter (Modern Sans)</option>
-            <option value="Outfit">Outfit (Geometric Sans)</option>
-            <option value="Montserrat">Montserrat (Stylish Bold)</option>
-            <option value="Cinzel">Cinzel (Classic / Serif)</option>
-            <option value="Georgia">Georgia (Traditional Serif)</option>
-            <option value="Arial">Arial (Standard Sans)</option>
-            <option value="Comic Sans MS">Comic Sans (Playful)</option>
-          </select>
-        </div>
+        <div class="premium-controls-wrapper">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="settings-grid-font">Grid Font Style</label>
+            <select id="settings-grid-font" class="modern-select">
+              <option value="none">None (System Default)</option>
+              <option value="Fredoka One">Fredoka One (Default)</option>
+              <option value="Inter">Inter (Modern Sans)</option>
+              <option value="Outfit">Outfit (Geometric Sans)</option>
+              <option value="Montserrat">Montserrat (Stylish Bold)</option>
+              <option value="Cinzel">Cinzel (Classic / Serif)</option>
+              <option value="Georgia">Georgia (Traditional Serif)</option>
+              <option value="Arial">Arial (Standard Sans)</option>
+              <option value="Comic Sans MS">Comic Sans (Playful)</option>
+            </select>
+          </div>
 
-        <div class="form-group" style="margin-top: 12px;">
-          <label>Grid Font Format</label>
-          <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
-            <input type="color" id="settings-grid-font-color" value="#ffffff" style="width: 32px; height: 30px; border-radius: 6px; border: 2px solid var(--color-border); cursor: pointer; background: transparent; padding: 0;" title="Grid Font Color">
-            <button type="button" id="settings-grid-font-bold-btn" class="font-style-btn" title="Toggle Bold" style="width: 30px; height: 30px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-weight: 900; padding: 0;">B</button>
-            <div class="form-group-checkbox" style="margin: 0; display: flex; align-items: center; gap: 4px;">
-              <input type="checkbox" id="settings-grid-font-color-default" style="margin: 0; width: 14px; height: 14px; cursor: pointer;">
-              <label for="settings-grid-font-color-default" style="font-size: 0.78rem; font-weight: 700; color: var(--color-text-muted); cursor: pointer; margin: 0; user-select: none;">Default Color</label>
+          <label>Font Formatting</label>
+          <div class="typography-format-row">
+            <div class="color-picker-wrapper" title="Choose Font Color">
+              <input type="color" id="settings-grid-font-color" value="#ffffff">
+            </div>
+            
+            <button type="button" id="settings-grid-font-bold-btn" class="font-style-btn" title="Toggle Bold">B</button>
+            
+            <div class="form-group-checkbox default-color-toggle">
+              <input type="checkbox" id="settings-grid-font-color-default">
+              <label for="settings-grid-font-color-default">Default Color</label>
             </div>
           </div>
         </div>
@@ -452,7 +456,7 @@
         <h4 class="sidebar-section-title">🔧 Advanced Utilities</h4>
 
         <!-- Row 1: Game Rules -->
-        <div class="sidebar-row-card">
+        <div class="premium-controls-wrapper">
           <div class="sidebar-row-header">⚖️ Game Rules</div>
           <div class="form-group-checkbox" style="margin-top: 8px;">
             <input type="checkbox" id="settings-subtract" checked>
@@ -462,9 +466,9 @@
             <input type="checkbox" id="settings-enable-tiebreaker">
             <label for="settings-enable-tiebreaker">Enable Tie Breaker (if tied at end)</label>
           </div>
-          <div class="form-group" style="margin-top: 8px;">
+          <div class="form-group" style="margin-top: 12px;">
             <label for="settings-display-mode">Grid Display Mode</label>
-            <select id="settings-display-mode" style="width: 100%;">
+            <select id="settings-display-mode" class="modern-select">
               <option value="QUESTION_POINTS">Question + Points</option>
               <option value="QUESTION_ONLY">Question Only</option>
               <option value="POINTS_ONLY">Points Only</option>
@@ -473,22 +477,23 @@
         </div>
 
         <!-- Row 2: Layout & Timer -->
-        <div class="sidebar-row-card" style="margin-top: 12px;">
+        <div class="premium-controls-wrapper">
           <div class="sidebar-row-header">📏 Layout & Timer</div>
-          <div style="display: flex; gap: 10px; margin-top: 8px;">
+          <div style="display: flex; gap: 10px; margin-top: 12px;">
             <div class="form-group" style="flex: 1;">
               <label for="settings-total-questions">Questions</label>
-              <input type="number" id="settings-total-questions" value="20" min="1" max="100" style="width: 100%;">
+              <input type="number" id="settings-total-questions" class="modern-input" value="20" min="1" max="100">
             </div>
             <div class="form-group" style="flex: 1;">
               <label for="settings-timer-duration">Timer (mins)</label>
-              <input type="number" id="settings-timer-duration" value="10" min="1" max="180" style="width: 100%;">
+              <input type="number" id="settings-timer-duration" class="modern-input" value="10" min="1" max="180">
             </div>
           </div>
           <div class="form-group-checkbox" style="margin-top: 10px;">
             <input type="checkbox" id="settings-enable-timer" checked>
             <label for="settings-enable-timer">Enable Countdown Timer</label>
           </div>
+
           <div class="form-group-checkbox" style="margin-top: 10px;">
             <input type="checkbox" id="settings-play-video-feedback">
             <label for="settings-play-video-feedback">Use Video for Feedback</label>
@@ -537,9 +542,9 @@
         </div>
 
         <!-- Row 3: Quiz Files -->
-        <div class="sidebar-row-card" style="margin-top: 12px;">
+        <div class="premium-controls-wrapper">
           <div class="sidebar-row-header">📂 Quiz Files</div>
-          <div class="sidebar-btn-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+          <div class="sidebar-btn-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
             <button id="btn-load-default" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700;">📖 Defaults</button>
             <button id="btn-save-game-board" class="btn btn-primary" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700;">💾 Save Game</button>
             <button id="btn-export-json" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700;">📤 Export</button>
@@ -549,9 +554,9 @@
         </div>
 
         <!-- Row 4: Danger Operations -->
-        <div class="sidebar-row-card danger-card" style="margin-top: 12px;">
+        <div class="premium-controls-wrapper danger-card">
           <div class="sidebar-row-header" style="color: var(--color-error);">⚠️ Danger Operations</div>
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
             <button id="btn-save-settings" class="btn btn-primary" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700;">💾 Save Changes</button>
             <button id="btn-reset-game" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700; border-color: rgba(255, 61, 61, 0.3);">🔄 Reset Active Game</button>
             <button id="btn-clear-db" class="btn btn-danger" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700;">🗑️ Clear All Questions</button>
