@@ -1019,15 +1019,6 @@ async function loadDefaultQuiz() {
         "options": [],
         "answer": "Crown of Life",
         "points": 1000
-      },
-      {
-        "id": "qtiebreaker",
-        "qnIndex": "tiebreaker",
-        "type": "fill",
-        "question": "What reward has God promised to those who overcome temptation? They will receive the __________ of __________.",
-        "options": [],
-        "answer": "Crown of Life",
-        "points": 1000
       }
     ],
     "teams": [
