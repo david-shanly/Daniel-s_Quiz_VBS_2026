@@ -856,8 +856,7 @@ function applySelectedFont() {
 
   if (!useDefaultQnColor) {
     css += `
-      #game-board-grid .cell-qn-label,
-      #admin-interactive-grid .cell-qn-label {
+      .qn-only-text {
         color: ${qnFontColor} !important;
       }
     `;
@@ -948,11 +947,11 @@ function renderAdminGrid() {
 
       const labelEl = document.createElement('span');
       labelEl.className = 'cell-qn-label';
-      let displayHtml = qnLabel(qn);
+      let displayHtml = `<span class="qn-only-text">${qnLabel(qn)}</span>`;
       if (q) {
         if (db.settings.displayMode === 'POINTS_ONLY') displayHtml = `(${q.points})`;
-        else if (db.settings.displayMode === 'QUESTION_ONLY') displayHtml = qnLabel(qn);
-        else displayHtml = `${qnLabel(qn)}<br><span style="font-size:0.8em">(${q.points})</span>`;
+        else if (db.settings.displayMode === 'QUESTION_ONLY') displayHtml = `<span class="qn-only-text">${qnLabel(qn)}</span>`;
+        else displayHtml = `<span class="qn-only-text">${qnLabel(qn)}</span><br><span style="font-size:0.8em">(${q.points})</span>`;
       }
 
       if (isPlayed) {
@@ -1024,8 +1023,8 @@ function renderAdminGrid() {
 
     const labelEl = document.createElement('span');
     labelEl.className = 'cell-qn-label';
-    labelEl.innerHTML = 'TB';
-    if (tbPlayed) labelEl.innerHTML = '✔️<br><span style="font-size:0.8em">TB</span>';
+    labelEl.innerHTML = '<span class="qn-only-text">TB</span>';
+    if (tbPlayed) labelEl.innerHTML = `✔️<br><span class="qn-only-text" style="font-size:0.8em">TB</span>`;
     cell.appendChild(labelEl);
 
     if (qTb) {
@@ -1225,14 +1224,14 @@ function renderGameBoard() {
     btn.setAttribute('aria-label', qnLabel(qn));
     const answered = playState.answeredCells[cId];
 
-    let displayHtml = qnLabel(qn);
+    let displayHtml = `<span class="qn-only-text">${qnLabel(qn)}</span>`;
     if (q) {
       if (db.settings.displayMode === 'POINTS_ONLY') {
         displayHtml = `(${q.points})`;
       } else if (db.settings.displayMode === 'QUESTION_ONLY') {
-        displayHtml = qnLabel(qn);
+        displayHtml = `<span class="qn-only-text">${qnLabel(qn)}</span>`;
       } else {
-        displayHtml = `${qnLabel(qn)}<br><span style="font-size:0.8em">(${q.points})</span>`;
+        displayHtml = `<span class="qn-only-text">${qnLabel(qn)}</span><br><span style="font-size:0.8em">(${q.points})</span>`;
       }
     }
 
@@ -1312,11 +1311,11 @@ function renderGameBoard() {
       btn.style.borderColor = 'var(--color-gold)';
       btn.style.boxShadow = '0 0 15px rgba(244, 196, 48, 0.4)';
       
-      let displayHtml = 'TIE BREAKER';
+      let displayHtml = '<span class="qn-only-text">TIE BREAKER</span>';
       if (db.settings.displayMode === 'POINTS_ONLY' && tieQ) {
         displayHtml = `(${tieQ.points})`;
       } else if (db.settings.displayMode !== 'QUESTION_ONLY' && tieQ) {
-        displayHtml = `TIE BREAKER<br><span style="font-size:0.8em">(${tieQ.points})</span>`;
+        displayHtml = `<span class="qn-only-text">TIE BREAKER</span><br><span style="font-size:0.8em">(${tieQ.points})</span>`;
       }
 
       const answered = playState.answeredCells[cId];
