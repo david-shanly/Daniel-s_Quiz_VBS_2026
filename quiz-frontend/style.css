@@ -191,32 +191,17 @@ html {
 }
 @media (max-width: 768px) {
   .game-board-table {
+  flex: 1;
   display: grid;
   gap: 0.625rem;
-  
-  --gap-count-x: calc(var(--cols, 4) - 1);
-  --gap-count-y: calc(var(--rows, 5) - 1);
-  --gap-space-x: calc(var(--gap-count-x) * 0.625rem);
-  --gap-space-y: calc(var(--gap-count-y) * 0.625rem);
-  
-  --available-w: calc(100% - var(--gap-space-x));
-  --available-h: calc(100% - var(--gap-space-y));
-  
-  --tile-w: calc(var(--available-w) / var(--cols, 4));
-  --tile-h: calc(var(--available-h) / var(--rows, 5));
-  
-  --tile-size: min(var(--tile-w), var(--tile-h));
-  
-  grid-template-columns: repeat(var(--cols, 4), var(--tile-size)) !important;
-  grid-template-rows: repeat(var(--rows, 5), var(--tile-size)) !important;
-  
-  justify-content: center;
-  align-content: center;
-  
+  min-height: 0;
   width: 100%;
-  height: 100%;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(var(--rows, 5), minmax(0, 1fr)) !important;
 }
   .game-cell-btn, .board-cell {
+  min-height: 2.8rem;
+
     padding: 0.25rem;
     border-width: 1.5px;
   }
@@ -900,8 +885,7 @@ body {
   flex: 1;
   overflow: hidden;
   display: flex;
-  justify-content: stretch;
-  align-items: stretch;
+  flex-direction: column;
   padding: 0.75rem;
   background: var(--cell-bg);
   border-radius: var(--radius-md);
