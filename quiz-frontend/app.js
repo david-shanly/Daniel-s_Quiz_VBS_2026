@@ -56,9 +56,6 @@ let db = {
 let gameTimerInterval = null;
 let gameTimerEndTime = null;
 let gameTimerAlertShown = false;
-let currentUploadedVideoBase64 = null;
-let currentUploadedCorrectVideo = null;
-let currentUploadedWrongVideo = null;
 
 function startGameTimer() {
   const display = document.getElementById('game-timer-display');
@@ -1324,31 +1321,8 @@ async function openQuestionEditor(qnIndex) {
   const form = document.getElementById('question-form');
   form.reset();
 
-  currentUploadedVideoBase64 = null;
-  currentUploadedCorrectVideo = null;
-  currentUploadedWrongVideo = null;
-
-  const statusEl = document.getElementById('q-video-status');
-  const clearBtn = document.getElementById('btn-clear-q-video');
-  const fileInput = document.getElementById('q-video-file');
-  if (fileInput) fileInput.value = '';
-
-  const correctStatusEl = document.getElementById('q-video-correct-status');
-  const correctClearBtn = document.getElementById('btn-clear-q-video-correct');
-  const correctFileInput = document.getElementById('q-video-correct-file');
-  if (correctFileInput) correctFileInput.value = '';
-
-  const wrongStatusEl = document.getElementById('q-video-wrong-status');
-  const wrongClearBtn = document.getElementById('btn-clear-q-video-wrong');
-  const wrongFileInput = document.getElementById('q-video-wrong-file');
-  if (wrongFileInput) wrongFileInput.value = '';
-
-  if (statusEl) statusEl.textContent = 'No video selected';
-  if (clearBtn) clearBtn.style.display = 'none';
-  if (correctStatusEl) correctStatusEl.textContent = 'No video selected';
-  if (correctClearBtn) correctClearBtn.style.display = 'none';
-  if (wrongStatusEl) wrongStatusEl.textContent = 'No video selected';
-  if (wrongClearBtn) wrongClearBtn.style.display = 'none';
+  
+  
 
   const qEmojiCorrect = document.getElementById('q-emoji-correct');
   const qEmojiWrong = document.getElementById('q-emoji-wrong');
@@ -1363,6 +1337,8 @@ async function openQuestionEditor(qnIndex) {
 
   if (q) {
     document.getElementById('q-type').value = q.questionType || (q.type === 'fill' ? 'fill_blank' : 'mcq');
+  const qPointsEl = document.getElementById('q-points');
+  if (qPointsEl) qPointsEl.value = q ? q.points : 100;
     document.getElementById('q-text').value = q.question;
     document.getElementById('q-points').value = q.points;
 
@@ -3280,24 +3256,7 @@ document.getElementById('question-form').addEventListener('submit', async e => {
     answer = document.getElementById('q-fill-answer').value.trim();
   }
 
-  // Handle custom video saving to IndexedDB
-  if (currentUploadedVideoBase64) {
-    await saveVideoToIndexedDB(qnIndex, currentUploadedVideoBase64);
-  } else {
-    await deleteVideoFromIndexedDB(qnIndex);
-  }
-
-  if (currentUploadedCorrectVideo) {
-    await saveVideoToIndexedDB('q-' + qnIndex + '-correct', currentUploadedCorrectVideo);
-  } else {
-    await deleteVideoFromIndexedDB('q-' + qnIndex + '-correct');
-  }
-
-  if (currentUploadedWrongVideo) {
-    await saveVideoToIndexedDB('q-' + qnIndex + '-wrong', currentUploadedWrongVideo);
-  } else {
-    await deleteVideoFromIndexedDB('q-' + qnIndex + '-wrong');
-  }
+  
 
   const existIdx = db.questions.findIndex(q => q.qnIndex === qnIndex);
   const qObj = {
@@ -3308,10 +3267,7 @@ document.getElementById('question-form').addEventListener('submit', async e => {
     options,
     answer,
     points: pts,
-    video: currentUploadedVideoBase64 ? true : null,
-    hasCustomCorrectVideo: currentUploadedCorrectVideo ? true : false,
-    hasCustomWrongVideo: currentUploadedWrongVideo ? true : false,
-    customCorrectEmoji: document.getElementById('q-emoji-correct') ? document.getElementById('q-emoji-correct').value.trim() : '',
+        customCorrectEmoji: document.getElementById('q-emoji-correct') ? document.getElementById('q-emoji-correct').value.trim() : '',
     customWrongEmoji: document.getElementById('q-emoji-wrong') ? document.getElementById('q-emoji-wrong').value.trim() : ''
   };
 

@@ -132,6 +132,10 @@
                 </div>
 
                 <div class="form-group">
+                  <label for="q-points">Points</label>
+                  <input type="number" id="q-points" class="modern-input" value="100" min="0" step="10" required>
+                </div>
+                <div class="form-group">
                   <label for="q-text">Question Text</label>
                   <textarea id="q-text" rows="3" placeholder="Enter your question here..." required></textarea>
                 </div>
@@ -163,40 +167,6 @@
                 <div id="fill-answer-container" class="form-group">
                   <label for="q-fill-answer">Correct Answer</label>
                   <input type="text" id="q-fill-answer" placeholder="Type the correct answer...">
-                </div>
-
-                <div class="form-group" style="margin-top: 16px;">
-                  <label>🎬 Custom Question Video (Optional)</label>
-                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px;">
-                    <input type="file" id="q-video-file" accept="video/mp4,video/webm,video/ogg" style="display: none;">
-                    <button type="button" class="btn btn-secondary" style="padding: 10px 20px; font-size: 0.9rem;" onclick="document.getElementById('q-video-file').click()">📁 Choose Video</button>
-                    <span id="q-video-status" style="font-size: 0.85rem; color: var(--color-text-muted);">No video selected</span>
-                    <button type="button" id="btn-clear-q-video" class="btn btn-danger" style="display: none; padding: 8px 14px; font-size: 0.85rem;">✕ Clear</button>
-                  </div>
-                </div>
-
-                <div id="per-question-video-options" class="form-group" style="margin-top: 16px; padding: 12px; border: 1px solid var(--panel-border-active); border-radius: 8px; background: rgba(0,0,0,0.15);">
-                  <label style="color: var(--color-gold); margin-bottom: 8px; display: block;">🎥 Per-Question Feedback Videos (Optional)</label>
-                  
-                  <label style="font-size: 0.75rem; color: var(--color-success); font-weight: 800;">✅ Correct Answer Video</label>
-                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px; margin-bottom: 12px;">
-                    <input type="file" id="q-video-correct-file" accept="video/mp4,video/webm,video/ogg" style="display: none;">
-                    <button type="button" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8rem;"
-                      onclick="document.getElementById('q-video-correct-file').click()">📁 Choose</button>
-                    <span id="q-video-correct-status" style="font-size: 0.75rem; color: var(--color-text-muted);">No video selected</span>
-                    <button type="button" id="btn-clear-q-video-correct" class="btn btn-danger"
-                      style="display: none; padding: 6px 10px; font-size: 0.75rem;">✕ Clear</button>
-                  </div>
-                  
-                  <label style="font-size: 0.75rem; color: var(--color-danger); font-weight: 800;">❌ Wrong Answer Video</label>
-                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
-                    <input type="file" id="q-video-wrong-file" accept="video/mp4,video/webm,video/ogg" style="display: none;">
-                    <button type="button" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8rem;"
-                      onclick="document.getElementById('q-video-wrong-file').click()">📁 Choose</button>
-                    <span id="q-video-wrong-status" style="font-size: 0.75rem; color: var(--color-text-muted);">No video selected</span>
-                    <button type="button" id="btn-clear-q-video-wrong" class="btn btn-danger"
-                      style="display: none; padding: 6px 10px; font-size: 0.75rem;">✕ Clear</button>
-                  </div>
                 </div>
 
                 <div id="per-question-emoji-options" class="form-group" style="margin-top: 16px; padding: 12px; border: 1px solid var(--panel-border-active); border-radius: 8px; background: rgba(0,0,0,0.15);">
@@ -330,7 +300,7 @@
 
         <!-- Fill-in-the-blank -->
         <div id="modal-fill-container" class="fill-container" style="display:flex; flex-direction:column; gap:10px;">
-          <input type="text" id="modal-fill-input" placeholder="Type answer here..." autocomplete="off">
+          <textarea id="modal-fill-input" rows="3" placeholder="Type answer here..." autocomplete="off" style="width: 100%; border-radius: 8px; padding: 12px; border: 2px solid var(--panel-border-active); background: var(--cell-bg); color: var(--color-text); font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 1.1rem;"></textarea>
           <button id="btn-show-correct-answer" type="button" class="btn btn-secondary btn-show-correct-answer" style="width: 100%;">
             Correct Answer
           </button>
