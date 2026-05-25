@@ -3,9 +3,24 @@
     "subtractOnWrong": true,
     "totalQuestions": 12,
     "displayMode": "QUESTION_NUMBER",
-    "enableTieBreaker": true,
+    "timerDuration": 10,
     "enableTimer": true,
-    "gridCols": 4
+    "gridFont": "Fredoka One",
+    "applyFontToAll": false,
+    "playVideoFeedback": false,
+    "enableTieBreaker": true,
+    "useCustomFeedbackVideos": false,
+    "gridFontColor": "#ffffff",
+    "gridFontBold": false,
+    "useDefaultFontColor": true,
+    "gridCols": 4,
+    "playEmojiFeedback": true,
+    "enableCustomPerQuestionEmoji": false,
+    "emojiMode": "random",
+    "positiveEmojis": "👏,🎉,🌟,🙌,💯,🏆,🤩,👍,👌,😊,👏",
+    "negativeEmojis": "🤔,😬,🙊,😅,🙈,🤷‍♂️,🤦‍♀️,🤨",
+    "gridQnColor": "#ffb700",
+    "gridQnColorDefault": true
   },
   "questions": [
     {
@@ -13,7 +28,12 @@
       "qnIndex": 1,
       "type": "mcq",
       "question": "Who was the king of Babylon when Daniel was taken into captivity?",
-      "options": ["King David", "King Cyrus", "King Nebuchadnezzar", "King Saul"],
+      "options": [
+        "King David",
+        "King Cyrus",
+        "King Nebuchadnezzar",
+        "King Saul"
+      ],
       "answer": "King Nebuchadnezzar",
       "points": 200
     },
@@ -22,7 +42,12 @@
       "qnIndex": 2,
       "type": "mcq",
       "question": "Who was the chief officer under King Nebuchadnezzar who brought the young men of Judah into the palace?",
-      "options": ["Daniel", "Ashpenaz", "Abednego", "Ezekiel"],
+      "options": [
+        "Daniel",
+        "Ashpenaz",
+        "Abednego",
+        "Ezekiel"
+      ],
       "answer": "Ashpenaz",
       "points": 200
     },
@@ -31,7 +56,12 @@
       "qnIndex": 3,
       "type": "mcq",
       "question": "What was the right choice Daniel and his friends made?",
-      "options": ["To join idol worship", "To honor God and avoid sin", "To run away from Babylon", "To become soldiers"],
+      "options": [
+        "To join idol worship",
+        "To honor God and avoid sin",
+        "To run away from Babylon",
+        "To become soldiers"
+      ],
       "answer": "To honor God and avoid sin",
       "points": 200
     },
@@ -40,7 +70,12 @@
       "qnIndex": 4,
       "type": "mcq",
       "question": "Why was eating the king’s food a problem?",
-      "options": ["It was too expensive", "It was not tasty", "It was offered to idols and unclean according to Jewish law", "It was vegetarian"],
+      "options": [
+        "It was too expensive",
+        "It was not tasty",
+        "It was offered to idols and unclean according to Jewish law",
+        "It was vegetarian"
+      ],
       "answer": "It was offered to idols and unclean according to Jewish law",
       "points": 200
     },
@@ -124,6 +159,18 @@
       "options": [],
       "answer": "Crown of Life",
       "points": 1000
+    }
+  ],
+  "teams": [
+    {
+      "name": "Lion",
+      "logo": "lion.png",
+      "useDefault": true
+    },
+    {
+      "name": "Lioness",
+      "logo": "lioness.png",
+      "useDefault": true
     }
   ]
 }

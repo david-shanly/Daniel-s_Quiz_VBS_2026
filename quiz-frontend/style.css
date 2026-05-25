@@ -191,8 +191,31 @@ html {
 }
 @media (max-width: 768px) {
   .game-board-table {
-    gap: 0.35rem;
-  }
+  display: grid;
+  gap: 0.625rem;
+  
+  --gap-count-x: calc(var(--cols, 4) - 1);
+  --gap-count-y: calc(var(--rows, 5) - 1);
+  --gap-space-x: calc(var(--gap-count-x) * 0.625rem);
+  --gap-space-y: calc(var(--gap-count-y) * 0.625rem);
+  
+  --available-w: calc(100% - var(--gap-space-x));
+  --available-h: calc(100% - var(--gap-space-y));
+  
+  --tile-w: calc(var(--available-w) / var(--cols, 4));
+  --tile-h: calc(var(--available-h) / var(--rows, 5));
+  
+  --tile-size: min(var(--tile-w), var(--tile-h));
+  
+  grid-template-columns: repeat(var(--cols, 4), var(--tile-size)) !important;
+  grid-template-rows: repeat(var(--rows, 5), var(--tile-size)) !important;
+  
+  justify-content: center;
+  align-content: center;
+  
+  width: 100%;
+  height: 100%;
+}
   .game-cell-btn, .board-cell {
     padding: 0.25rem;
     border-width: 1.5px;
@@ -718,7 +741,6 @@ body {
 
 .form-group textarea {
   resize: vertical;
-  aspect-ratio: 1 / 1;
 }
 
 .form-group select option {
@@ -878,8 +900,8 @@ body {
   flex: 1;
   overflow: hidden;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: stretch;
+  align-items: stretch;
   padding: 0.75rem;
   background: var(--cell-bg);
   border-radius: var(--radius-md);
@@ -899,7 +921,6 @@ body {
   background: var(--panel-bg);
   border: 2.5px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-sm);
-  aspect-ratio: 1 / 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1197,8 +1218,8 @@ body {
 .game-board-container {
   margin-bottom: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: stretch;
+  align-items: stretch;
   height: 100%;
 }
 
@@ -1535,7 +1556,6 @@ body {
 #modal-cell-id {
   font-family: var(--font-display);
   font-size: 1.27rem;
-  aspect-ratio: 1 / 1;
   padding: 18px 20px;
   border: 2px solid rgba(244, 196, 48, 0.42);
   box-shadow: 0 0 16px rgba(244, 196, 48, 0.18);
@@ -1547,7 +1567,6 @@ body {
   border: 2px solid rgba(244, 196, 48, 0.95) !important;
   font-family: var(--font-display);
   font-size: 1.27rem;
-  aspect-ratio: 1 / 1;
   padding: 18px 20px;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
   box-shadow: 0 0 0 3px rgba(244, 196, 48, 0.1),
@@ -1561,7 +1580,6 @@ body {
   font-weight: 900;
   font-size: 1.27rem;
   letter-spacing: 1.8px;
-  aspect-ratio: 1 / 1;
   padding: 18px 24px;
   border-radius: var(--radius-pill);
   background: linear-gradient(135deg, rgba(244, 196, 48, 0.24), rgba(244, 196, 48, 0.08));
