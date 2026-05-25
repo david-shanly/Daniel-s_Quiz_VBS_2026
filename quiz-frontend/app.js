@@ -522,7 +522,7 @@ function loadSavedDB(parsed) {
         return q;
       }),
       teams: (parsed.teams && Array.isArray(parsed.teams) && parsed.teams.length >= 2)
-        ? parsed.teams.map((t, i) => {
+        ? parsed.teams.slice(0, 2).map((t, i) => {
           let teamObj = typeof t === 'string' ? { name: t, logo: DEFAULT_TEAMS[i].logo } : t;
           if (teamObj.useDefault === undefined) {
             teamObj.useDefault = (teamObj.name === DEFAULT_TEAMS[i].name && (teamObj.logo === DEFAULT_TEAMS[i].logo || !teamObj.logo));
@@ -2558,7 +2558,7 @@ function endGame() {
 // TEAMS SETUP
 // ============================================================
 function setupTeamsFromInputs() {
-  playState.teams = db.teams.map((t, idx) => {
+  playState.teams = db.teams.slice(0, 2).map((t, idx) => {
     const isDef = !!t.useDefault;
     const defaultName = idx === 0 ? 'Lion' : 'Lioness';
     const defaultLogo = idx === 0 ? 'lion.png' : 'lioness.png';
@@ -2915,7 +2915,7 @@ document.getElementById('import-json-file').addEventListener('click', async (e) 
           },
           questions: parsed.questions || [],
           teams: (parsed.teams && Array.isArray(parsed.teams) && parsed.teams.length >= 2)
-            ? parsed.teams
+            ? parsed.teams.slice(0, 2)
             : [...DEFAULT_TEAMS],
         };
         saveDB();
