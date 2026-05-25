@@ -627,8 +627,8 @@ body {
 
 .admin-grid-layout {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+  grid-template-columns: 1fr 272px;
+  gap: 21px;
   align-items: start;
   
 }
