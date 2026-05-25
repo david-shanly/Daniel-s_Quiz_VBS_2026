@@ -36,7 +36,7 @@ const TEAM_ICONS = ['⚔️', '🌸', '🦁', '👑', '🔥', '💎'];
 let db = {
   settings: {
     subtractOnWrong: true,
-    totalQuestions: 20,
+    totalQuestions: 12,
     displayMode: 'QUESTION_POINTS',
     timerDuration: 10,
     enableTimer: true,
@@ -441,7 +441,7 @@ function saveDB() {
 
 const defaultSettings = {
   subtractOnWrong: true,
-  totalQuestions: 13,
+  totalQuestions: 12,
   displayMode: 'QUESTION_NUMBER',
   timerDuration: 10,
   enableTimer: true,
@@ -913,6 +913,7 @@ function renderAdminGrid() {
   const container = document.getElementById('admin-interactive-grid');
   container.innerHTML = '';
   const cols = 4;
+  container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   document.documentElement.style.setProperty('--cols', cols);
 
   const qCountEl = document.getElementById('admin-q-count');
@@ -922,38 +923,11 @@ function renderAdminGrid() {
   const total = db.settings.totalQuestions;
   const rows = Math.ceil(total / cols);
 
-  const emptyLabel = document.createElement('div');
-  container.appendChild(emptyLabel);
-  for (let c = 1; c <= cols; c++) {
-    const colLabel = document.createElement('div');
-    colLabel.className = 'grid-col-label';
-    colLabel.textContent = `Column ${c}`;
-    container.appendChild(colLabel);
-  }
+  // Column labels removed
 
   let qn = 1;
   for (let r = 0; r < rows; r++) {
-    let rowTypes = [];
-    let isRowFull = true;
-    for (let c = 0; c < cols; c++) {
-      const cellQn = (r * cols) + c + 1;
-      if (cellQn > total) {
-        isRowFull = false;
-        break;
-      }
-      const q = questionsExcludingTB.find(x => x.qnIndex === cellQn);
-      if (q) rowTypes.push(q.type);
-      else isRowFull = false;
-    }
-
-    const rowLabel = document.createElement('div');
-    rowLabel.className = 'grid-row-label';
-    if (isRowFull && rowTypes.length > 0 && rowTypes.every(v => v === rowTypes[0])) {
-      rowLabel.textContent = getTypeLabel(rowTypes[0]);
-    } else {
-      rowLabel.textContent = '';
-    }
-    container.appendChild(rowLabel);
+    // Row labels removed
 
     for (let c = 0; c < cols; c++) {
       if (qn > total) {
@@ -1040,10 +1014,7 @@ function renderAdminGrid() {
     const qTb = db.questions.find(x => x.qnIndex === 'tiebreaker');
     const tbPlayed = !!(playState.teams && playState.teams.length > 0 && playState.answeredCells['q-tiebreaker']);
     
-    const rowLabel = document.createElement('div');
-    rowLabel.className = 'grid-row-label';
-    rowLabel.textContent = '';
-    container.appendChild(rowLabel);
+    // TB row label removed
 
     const cell = document.createElement('div');
     cell.className = `board-cell ${qTb ? 'has-q' : ''} ${selectedAdminCellId === 'q-tiebreaker' ? 'selected-edit' : ''} ${tbPlayed ? 'cell-played-locked' : ''}`;
@@ -2868,7 +2839,7 @@ document.getElementById('import-json-file').addEventListener('change', e => {
         db = {
           settings: {
             subtractOnWrong: parsed.settings?.subtractOnWrong ?? true,
-            totalQuestions: parsed.settings?.totalQuestions ?? 20,
+            totalQuestions: parsed.settings?.totalQuestions ?? 12,
             displayMode: parsed.settings?.displayMode ?? 'QUESTION_NUMBER',
             timerDuration: parsed.settings?.timerDuration ?? 10,
             gridFont: parsed.settings?.gridFont ?? 'Fredoka One',

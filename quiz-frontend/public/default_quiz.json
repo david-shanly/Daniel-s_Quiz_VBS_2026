@@ -1,7 +1,7 @@
 {
   "settings": {
     "subtractOnWrong": true,
-    "totalQuestions": 13,
+    "totalQuestions": 12,
     "displayMode": "QUESTION_NUMBER",
     "enableTieBreaker": true,
     "enableTimer": true,
