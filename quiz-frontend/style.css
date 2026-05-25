@@ -192,6 +192,7 @@ html {
   width: 100%;
   grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)) !important;
   grid-template-rows: repeat(var(--rows, 5), minmax(0, 1fr)) !important;
+  min-height: 0;
 }
   .game-cell-btn, .board-cell {
   min-height: 2.8rem;
@@ -1215,6 +1216,9 @@ body {
   justify-content: stretch;
   align-items: stretch;
   height: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
 }
 
 /* Game cells — audience view */
@@ -1516,6 +1520,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: clamp(0.75rem, 1.5vh, 1.5rem);
+  min-height: 65vh;
+  justify-content: space-between;
   background: var(--panel-bg);
   border: 1px solid var(--cell-border);
   border-radius: var(--radius-lg);
@@ -2818,7 +2824,8 @@ body {
   .game-layout-container, .admin-grid-layout {
     display: flex;
     flex-direction: column;
-  }
+  min-height: 0;
+}
   .admin-sidebar, .game-leaderboard-sidebar {
     width: 100%;
     order: 2; /* Sidebar drops below grid */
