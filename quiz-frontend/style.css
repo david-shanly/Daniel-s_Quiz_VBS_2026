@@ -876,8 +876,10 @@ body {
 /* Admin grid board */
 .admin-grid-scroll-wrapper {
   flex: 1;
-
-  overflow-x: auto;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 0.75rem;
   background: var(--cell-bg);
   border-radius: var(--radius-md);
@@ -888,7 +890,8 @@ body {
   display: grid;
   gap: 0.625rem;
   min-width: 360px;
-  width: 100%;
+  width: auto;
+  height: auto;
 }
 
 /* Admin cells */
@@ -1193,6 +1196,10 @@ body {
 
 .game-board-container {
   margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 /* Game cells — audience view */

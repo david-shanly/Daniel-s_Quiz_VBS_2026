@@ -954,7 +954,14 @@ function renderAdminGrid() {
 
   const questionsExcludingTB = db.questions.filter(x => x.qnIndex !== 'tiebreaker');
   const total = db.settings.totalQuestions;
-  const rows = Math.ceil(total / cols);
+  const baseRows = Math.ceil(total / cols);
+  const rows = baseRows + (db.settings.enableTieBreaker ? 1 : 0);
+  container.style.aspectRatio = cols + " / " + rows;
+  container.style.gridTemplateRows = "repeat(" + rows + ", 1fr)";
+  container.style.maxHeight = "100%";
+  container.style.maxWidth = "100%";
+  container.style.margin = "0 auto";
+  container.style.height = "100%";
 
   // Column labels removed
 
