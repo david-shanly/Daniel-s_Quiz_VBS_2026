@@ -1375,7 +1375,8 @@ body {
   gap: 12px;
   justify-content: flex-end;
   flex-wrap: wrap;
-  padding-top: 4px;
+    padding-top: 4px;
+  padding-bottom: 24px;
 }
 
 /* ============================================================
