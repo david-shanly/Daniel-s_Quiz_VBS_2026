@@ -124,8 +124,10 @@
                 <div class="form-group">
                   <label for="q-type">Question Type</label>
                   <select id="q-type">
-                    <option value="fill">Short Answer / Fill in the Blank</option>
                     <option value="mcq">Multiple Choice (MCQ)</option>
+                    <option value="fill_blank">Fill in the Blank</option>
+                    <option value="short_answer">Short Answer</option>
+                    <option value="long_answer">Long Answer</option>
                   </select>
                 </div>
 
@@ -356,7 +358,7 @@
   </div>
 
   <footer class="app-footer-text">
-    &copy; 2026 Review Game Group C &mdash; Built for church kids!
+    &copy; 2026 Review Game Group C
   </footer>
 
   <!-- Global Countdown Overlay -->
@@ -581,7 +583,6 @@
           <div class="sidebar-row-header">📂 Quiz Files</div>
           <div class="sidebar-btn-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
             <button id="btn-load-default" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700;">📖 Defaults</button>
-            <button id="btn-cheat-sheet" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700;">🖨️ Cheat Sheet</button>
             <button id="btn-export-json" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700;">📤 Export</button>
             <button id="btn-import-wrapper" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.8rem; font-weight:700;" onclick="document.getElementById('import-json-file').click();">📥 Import</button>
             <input type="file" id="import-json-file" accept=".json" style="display: none;">

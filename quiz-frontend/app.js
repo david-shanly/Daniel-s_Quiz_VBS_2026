@@ -711,7 +711,7 @@ function loadGameState() {
             playState.cancelLocked = cLocked;
 
             if (playState.gameState === 'AWAITING_STEAL') {
-              const stealPts = 50;
+              const stealPts = Math.floor(q.points * 0.5);
               document.getElementById('modal-points-display').textContent = `${stealPts} POINTS - STEAL`;
 
               const turnStatus = document.getElementById('modal-turn-status');
@@ -1362,11 +1362,11 @@ async function openQuestionEditor(qnIndex) {
   if (perQEmoji) perQEmoji.style.display = db.settings.playVideoFeedback ? 'none' : 'block';
 
   if (q) {
-    document.getElementById('q-type').value = q.type;
+    document.getElementById('q-type').value = q.questionType || (q.type === 'fill' ? 'fill_blank' : 'mcq');
     document.getElementById('q-text').value = q.question;
     document.getElementById('q-points').value = q.points;
 
-    const isMCQ = q.type === 'mcq';
+    const isMCQ = (q.questionType || q.type) === 'mcq';
     document.getElementById('mcq-options-container').classList.toggle('hidden', !isMCQ);
     document.getElementById('fill-answer-container').classList.toggle('hidden', isMCQ);
     setMCQRequired(isMCQ);
@@ -1812,7 +1812,7 @@ function openQuestionModal(cId, q) {
     btnShowCorrectAnswer.style.cursor = '';
   }
 
-  if (q.type === 'mcq') {
+  if ((q.questionType || q.type) === 'mcq') {
     mcqContainer.classList.remove('hidden');
     fillContainer.classList.add('hidden');
     const optBtns = document.querySelectorAll('.option-btn');
@@ -1841,7 +1841,7 @@ function openQuestionModal(cId, q) {
     setTimeout(() => fillInput.focus(), 100);
   }
 
-  document.getElementById('modal-correct-answer-text').textContent = q.answer;
+  document.getElementById('modal-correct-answer-text').textContent = q.correctAnswer || q.answer;
   const contentNode = document.querySelector('.modal-content');
   contentNode.classList.remove('feedback-correct', 'feedback-wrong');
   const btnNext = document.getElementById('btn-modal-next');
@@ -1878,6 +1878,7 @@ function cancelQuestion() {
   transitionState('RESOLVED');
   playState.answeredCells[cId] = { teamIndex: -2, pointsWon: 0, cancelled: true };
   document.getElementById('modal-turn-status').textContent = "Question Cancelled";
+  switchTurn();
   saveGameState();
   enableNextButton();
   disableQuestionInputs();
@@ -2556,7 +2557,7 @@ function showEmojiFeedback(isCorrect, q, callback) {
     contentNode.classList.remove('feedback-wrong');
     contentNode.classList.add('feedback-correct');
 
-    document.getElementById('modal-correct-answer-text').textContent = q.answer;
+    document.getElementById('modal-correct-answer-text').textContent = q.correctAnswer || q.answer;
     document.getElementById('modal-reveal-panel').classList.remove('hidden');
 
     const turnStatus = document.getElementById('modal-turn-status');
@@ -2588,7 +2589,7 @@ function showEmojiFeedback(isCorrect, q, callback) {
     if (playState.stats[teamIndex]) playState.stats[teamIndex].attempts++;
 
     if (!playState.hasPassed && !playState.stealAttempted) {
-      const penalty = 50;
+      const penalty = Math.floor(pts * 0.5);
       const finalizeFirstWrong = () => {
         applyScore(teamIndex, penalty, true, true);
         updateScoreUI(teamIndex);
@@ -2606,7 +2607,7 @@ function showEmojiFeedback(isCorrect, q, callback) {
       }
     } else {
       const finalizeSecondWrong = () => {
-        applyScore(teamIndex, pts, true, true);
+        applyScore(teamIndex, Math.floor(pts * 0.5), true, true);
         updateScoreUI(teamIndex);
         transitionState('RESOLVED');
         disableQuestionInputs();
@@ -2622,7 +2623,7 @@ function showEmojiFeedback(isCorrect, q, callback) {
         contentNode.classList.remove('feedback-correct');
         contentNode.classList.add('feedback-wrong');
 
-        document.getElementById('modal-correct-answer-text').textContent = q.answer;
+        document.getElementById('modal-correct-answer-text').textContent = q.correctAnswer || q.answer;
         document.getElementById('modal-reveal-panel').classList.remove('hidden');
 
         playState.cancelLocked = true;
@@ -2650,7 +2651,7 @@ function startStealPhase() {
   playState.currentTeamIndex = nextTeamIndex;
 
   const q = playState.currentQuestion;
-  const stealPts = 50;
+  const stealPts = Math.floor(q.points * 0.5);
   document.getElementById('modal-points-display').textContent = `${stealPts} POINTS - STEAL`;
 
   // Disable previously selected option if any
@@ -3089,28 +3090,6 @@ const setupDefaultTeamToggle = (teamIdx, defaultCheckboxId, nameInputId, logoInp
 setupDefaultTeamToggle(0, 'admin-team1-default', 'admin-team1-name', 'admin-team1-logo', 'Lion', 'lion.png');
 setupDefaultTeamToggle(1, 'admin-team2-default', 'admin-team2-name', 'admin-team2-logo', 'Lioness', 'lioness.png');
 
-// Host Cheat Sheet
-document.getElementById('btn-cheat-sheet')?.addEventListener('click', () => {
-  playSound('click');
-  const printWindow = window.open('', '_blank');
-  let html = '<html><head><title>Host Cheat Sheet</title><style>body{font-family:sans-serif; padding:20px; color:#1e293b;} h1{text-align:center; border-bottom:2px solid #e2e8f0; padding-bottom:10px;} .q-box{border:1px solid #cbd5e1; padding:15px; margin-bottom:15px; border-radius:8px; background:#f8fafc;} .ans{color:#059669; font-weight:bold; font-size:1.1em;} .pts{color:#475569; font-size:0.9em; float:right;}</style></head><body>';
-  html += '<h1>Review Game - Host Cheat Sheet</h1>';
-  
-  const validQs = db.questions.filter(q => typeof q.qnIndex === 'number').sort((a,b) => a.qnIndex - b.qnIndex);
-  validQs.forEach(q => {
-    html += `<div class="q-box"><span class="pts">(${q.points} pts)</span><strong>Question ${q.qnIndex}:</strong><br><br><span style="font-size:1.2em;">${q.question}</span><br><br><span class="ans">Answer: ${q.answer}</span></div>`;
-  });
-  
-  const tieQ = db.questions.find(x => x.qnIndex === 'tiebreaker');
-  if (tieQ) {
-    html += `<h2>Tie Breaker</h2><div class="q-box"><span class="pts">(${tieQ.points} pts)</span><strong>Question TIE:</strong><br><br><span style="font-size:1.2em;">${tieQ.question}</span><br><br><span class="ans">Answer: ${tieQ.answer}</span></div>`;
-  }
-  
-  html += '</body></html>';
-  printWindow.document.write(html);
-  printWindow.document.close();
-});
-
 // Export JSON
 document.getElementById('btn-export-json').addEventListener('click', () => {
   playSound('click');
@@ -3371,7 +3350,7 @@ if (btnShowCorrectAnswer) {
 
     const fillInput = document.getElementById('modal-fill-input');
     if (fillInput) {
-      fillInput.value = q.answer;
+      fillInput.value = q.correctAnswer || q.answer;
       fillInput.focus();
       fillInput.select();
 
@@ -3412,7 +3391,7 @@ document.getElementById('btn-modal-submit').addEventListener('click', () => {
 
   disableModalActionButtons();
 
-  if (q.type === 'mcq') {
+  if ((q.questionType || q.type) === 'mcq') {
     const selBtn = document.querySelector('.option-btn.selected');
     if (!selBtn) {
       enableModalActionButtons();
@@ -3430,7 +3409,7 @@ document.getElementById('btn-modal-submit').addEventListener('click', () => {
     
     // Check if it's an exact match after stripping punctuation and spaces
     // Or if the admin provided multiple options separated by `||` (e.g., "Option 1 || Option 2")
-    const possibleAnswers = q.answer.split('||').map(s => normalize(s));
+    const possibleAnswers = (q.correctAnswer || q.answer).split('||').map(s => normalize(s));
     const isCorrect = possibleAnswers.includes(normalize(val));
     
     submitAnswer(isCorrect);
@@ -3951,3 +3930,6 @@ function applyDynamicScaling() {
 }
 window.addEventListener('resize', applyDynamicScaling);
 window.addEventListener('load', applyDynamicScaling);
+
+
+
