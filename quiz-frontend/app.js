@@ -764,7 +764,8 @@ async function loadDefaultQuiz() {
   }
 
   saveDB();
-  loadDB();
+  fallbackSaveDB();
+  loadSavedDB(db);
   
   playState.phase = 'live';
   playState.gameState = 'IDLE';
