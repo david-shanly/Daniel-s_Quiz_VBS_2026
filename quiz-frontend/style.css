@@ -1499,12 +1499,9 @@ body {
   inset: 0;
   background: rgba(0, 0, 0, 0.78);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 500;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  padding: 1.25rem;
+  z-index: 1000;
+  padding: 4vh 0;
+  overflow-y: auto;
 }
 
 
@@ -1514,18 +1511,14 @@ body {
 
 .modal-content {
   margin: auto;
-  width: 100%;
-  max-width: min(90vw, 1100px);
-  
-  padding: clamp(1.5rem, 4vh, 2.875rem);
+  width: 92vw;
+  padding: clamp(1.5rem, 3vh, 2.875rem);
   display: flex;
   flex-direction: column;
-  gap: clamp(0.75rem, 2vh, 1.5rem);
+  gap: clamp(0.75rem, 1.5vh, 1.5rem);
   background: var(--panel-bg);
   border: 1px solid var(--cell-border);
   border-radius: var(--radius-lg);
-  max-height: 90vh;
-    overflow-y: auto;
 }
 
 .modal-overlay.open .modal-content {
