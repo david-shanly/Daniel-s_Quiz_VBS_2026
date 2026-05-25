@@ -15,7 +15,7 @@
     "useDefaultFontColor": true,
     "gridCols": 4,
     "playEmojiFeedback": true,
-    "enableCustomPerQuestionEmoji": false,
+    "enableCustomPerQuestionEmoji": true,
     "emojiMode": "random",
     "positiveEmojis": "👏,🎉,🌟,🙌,💯,🏆,🤩,👍,👌,😊,👏",
     "negativeEmojis": "🤔,😬,🙊,😅,🙈,🤷‍♂️,🤦‍♀️,🤨",

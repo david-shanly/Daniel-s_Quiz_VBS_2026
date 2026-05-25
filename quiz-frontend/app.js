@@ -962,7 +962,7 @@ function renderAdminGrid() {
   // Column labels removed
 
   let qn = 1;
-  for (let r = 0; r < rows; r++) {
+  for (let r = 0; r < baseRows; r++) {
     // Row labels removed
 
     for (let c = 0; c < cols; c++) {

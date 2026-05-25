@@ -886,6 +886,8 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: stretch;
+  align-items: stretch;
   padding: 0.75rem;
   background: var(--cell-bg);
   border-radius: var(--radius-md);
@@ -893,11 +895,14 @@ body {
 }
 
 .game-board-table {
+  flex: 1;
   display: grid;
   gap: 0.625rem;
   min-width: 360px;
-  width: auto;
-  height: auto;
+  min-height: 0;
+  width: 100%;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(var(--rows, 5), minmax(0, 1fr)) !important;
 }
 
 /* Admin cells */
