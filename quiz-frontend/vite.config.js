@@ -36,8 +36,12 @@ function saveDbPlugin() {
 export default defineConfig({
   base: './',
   plugins: [saveDbPlugin()],
+  server: {
+    port: 5173,
+    strictPort: true
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
   },
-})
+});
