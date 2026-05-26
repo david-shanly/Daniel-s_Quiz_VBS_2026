@@ -489,7 +489,7 @@ body {
    ============================================================ */
 #screen-container {
   flex: 1;
-  padding: 28px 24px 76px 24px;
+  padding: 28px 24px 28px 24px;
   max-width: 1552px;
   margin: 0 auto;
   width: 100%;
