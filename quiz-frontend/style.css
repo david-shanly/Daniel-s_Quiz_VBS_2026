@@ -1380,25 +1380,41 @@ body {
 #screen-winner {
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
 }
 
 .winner-card {
   width: 90%;
-  max-width: 594px;
-  margin: 32px auto;
-  text-align: center;
-  padding: 50px 43px;
-  border-radius: var(--radius-lg);
-  
-  
-
+  max-width: min(594px, 85vw);
+  max-height: 90vh;
+  overflow-y: auto;
   margin: auto;
+  text-align: center;
+  padding: clamp(24px, 4vh, 50px) clamp(20px, 4vw, 43px);
+  border-radius: var(--radius-lg);
 }
 
+/* Tie – bigger, more dramatic card */
+.winner-card.winner-card-tie {
+  max-width: min(700px, 90vw);
+  padding: clamp(30px, 5vh, 60px) clamp(24px, 5vw, 50px);
+}
+.winner-card-tie .winner-trophy { font-size: clamp(4rem, 8vh, 6.5rem); }
+.winner-card-tie .winner-team-name { font-size: clamp(2rem, 5vw, 3.4rem); }
+.winner-card-tie .winner-badge { font-size: clamp(0.8rem, 1.5vw, 1rem); letter-spacing: 3.5px; padding: 8px 24px; }
+
+/* Win – compact, focused card */
+.winner-card.winner-card-win {
+  max-width: min(520px, 80vw);
+  padding: clamp(20px, 3.5vh, 40px) clamp(18px, 3.5vw, 35px);
+}
+.winner-card-win .winner-trophy { font-size: clamp(3rem, 6vh, 4.5rem); }
+.winner-card-win .winner-team-name { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+
 .winner-trophy {
-  font-size: 4.95rem;
+  font-size: clamp(3.5rem, 7vh, 4.95rem);
   animation: trophyBounce 1.2s ease infinite alternate;
-  margin-bottom: 11px;
+  margin-bottom: clamp(6px, 1.5vh, 11px);
   display: block;
 }
 
@@ -1417,40 +1433,40 @@ body {
   background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
   color: #0A0A0A;
   font-family: var(--font-display);
-  font-size: 0.81rem;
+  font-size: clamp(0.7rem, 1.2vw, 0.81rem);
   letter-spacing: 2.7px;
   padding: 6px 20px;
   border-radius: var(--radius-pill);
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.5rem, 1.5vh, 1rem);
 }
 
 .winner-team-name {
   font-family: var(--font-display);
-  font-size: 2.7rem;
-  margin-bottom: 13px;
+  font-size: clamp(1.8rem, 4.5vw, 2.7rem);
+  margin-bottom: clamp(8px, 1.5vh, 13px);
   font-weight: 400;
 }
 
 .hero-subtitle {
   color: var(--color-text-muted);
-  font-size: 0.95rem;
-  margin-bottom: 25px;
+  font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+  margin-bottom: clamp(12px, 2.5vh, 25px);
   line-height: 1.6;
 }
 
 .winner-standings-container {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: clamp(5px, 1vh, 9px);
   max-width: 396px;
-  margin: 20px auto 25px auto;
+  margin: clamp(10px, 2vh, 20px) auto clamp(12px, 2.5vh, 25px) auto;
 }
 
 .standing-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12.5px 20px;
+  padding: clamp(8px, 1.5vh, 12.5px) clamp(12px, 2vw, 20px);
   background: var(--cell-bg);
   border: 1.5px solid var(--cell-border);
   border-radius: var(--radius-sm);
@@ -1469,15 +1485,15 @@ body {
 }
 
 .winner-stats {
-  font-size: 0.83rem;
+  font-size: clamp(0.75rem, 1.2vw, 0.83rem);
   color: var(--color-text-muted);
-  margin-bottom: 25px;
+  margin-bottom: clamp(12px, 2.5vh, 25px);
   line-height: 1.9;
 }
 
 .winner-actions {
   display: flex;
-  gap: 14px;
+  gap: clamp(8px, 1.5vw, 14px);
   justify-content: center;
   flex-wrap: wrap;
 }

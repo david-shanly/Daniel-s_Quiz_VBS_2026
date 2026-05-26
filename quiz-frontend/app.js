@@ -1393,12 +1393,19 @@ function renderGameBoard() {
           btn.innerHTML = `<span class="cell-qn" style="color:var(--color-success); font-size:2.8rem; font-weight:900;">✔</span><span class="cell-answered-tag" style="color:${tColor.text};">${tName}</span>`;
         }
       } else {
-        btn.innerHTML = `<span class="cell-qn" style="color:#1e3a8a; font-size:1.1rem; text-align:center; line-height:1.2;">${displayHtml}</span>`;
-        btn.addEventListener('click', () => {
-          if (!canInteract() || !canOpenCell()) return;
-          playSound('open');
-          openQuestionModal(cId, tieQ);
-        });
+        if (isTied) {
+          btn.innerHTML = `<span class="cell-qn" style="color:#1e3a8a; font-size:1.1rem; text-align:center; line-height:1.2;">${displayHtml}</span>`;
+          btn.addEventListener('click', () => {
+            if (!canInteract() || !canOpenCell()) return;
+            playSound('open');
+            openQuestionModal(cId, tieQ);
+          });
+        } else {
+          btn.disabled = true;
+          btn.style.opacity = '0.4';
+          btn.style.cursor = 'not-allowed';
+          btn.innerHTML = `<span class="cell-qn" style="color:#999; font-size:1.1rem; text-align:center; line-height:1.2;">🔒 ${displayHtml}</span>`;
+        }
       }
       container.appendChild(btn);
     }
@@ -2691,6 +2698,10 @@ function endGame() {
 
   const winner = sorted[0];
   const tie = sorted.length > 1 && sorted[0].score === sorted[1].score;
+
+  const winnerCard = document.querySelector('.winner-card');
+  winnerCard.classList.remove('winner-card-tie', 'winner-card-win');
+  winnerCard.classList.add(tie ? 'winner-card-tie' : 'winner-card-win');
 
   if (tie) {
     document.getElementById('winner-badge').textContent = "IT'S A TIE! 🤝";
