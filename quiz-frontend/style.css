@@ -3806,7 +3806,7 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .question-text {
-  font-size: clamp(1.2rem, 2.5vw, 1.8rem) !important;
+  font-size: clamp(1.5rem, 3.2vw, 2.3rem) !important;
   padding: 0.15rem 0 !important;
   line-height: 1.35 !important;
 }
@@ -3817,15 +3817,15 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .option-btn {
-  padding: clamp(0.4rem, 1.2vh, 0.8rem) clamp(0.6rem, 1.2vw, 1.2rem) !important;
-  font-size: clamp(0.9rem, 1.1vw + 0.8vh, 1.2rem) !important;
-  gap: 10px !important;
+  padding: clamp(0.6rem, 1.6vh, 1.0rem) clamp(0.8rem, 1.6vw, 1.4rem) !important;
+  font-size: clamp(1.05rem, 1.3vw + 0.9vh, 1.4rem) !important;
+  gap: 12px !important;
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .option-letter {
-  width: 36px !important;
-  height: 36px !important;
-  font-size: 1.1rem !important;
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 1.25rem !important;
 }
 
 /* Fill-in-the-blank Compacting */
@@ -3834,28 +3834,28 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) #modal-fill-input {
-  padding: 0.6rem 1.2rem !important;
-  font-size: 1.1rem !important;
+  padding: 0.8rem 1.4rem !important;
+  font-size: 1.25rem !important;
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .btn-show-correct-answer {
-  padding: 0.5rem 1rem !important;
-  font-size: 0.95rem !important;
+  padding: 0.65rem 1.2rem !important;
+  font-size: 1.1rem !important;
 }
 
 /* Reveal Panel Compacting */
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .reveal-panel {
-  padding: 10px 14px !important;
-  border-width: 1px !important;
+  padding: 14px 18px !important;
+  border-width: 1.5px !important;
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .reveal-panel .reveal-title {
-  font-size: 0.75rem !important;
-  margin-bottom: 2px !important;
+  font-size: 0.95rem !important;
+  margin-bottom: 4px !important;
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .reveal-panel .reveal-value {
-  font-size: clamp(1.6rem, 3.5vh, 2.4rem) !important;
+  font-size: clamp(2.2rem, 4.5vh, 3.2rem) !important;
   font-weight: 800 !important;
 }
 
@@ -3866,8 +3866,8 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .btn {
-  padding: 0.5rem 1rem !important;
-  font-size: 0.95rem !important;
+  padding: 0.65rem 1.4rem !important;
+  font-size: 1.15rem !important;
 }
 
 /* Header compacting */
@@ -3876,12 +3876,12 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .badge {
-  font-size: 0.75rem !important;
-  padding: 3px 8px !important;
+  font-size: 0.88rem !important;
+  padding: 4px 10px !important;
 }
 
 .modal-content:has(#modal-reveal-panel:not(.hidden)) .modal-turn-status {
-  font-size: 0.8rem !important;
+  font-size: 1.15rem !important;
 }
 
 
