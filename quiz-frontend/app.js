@@ -26,6 +26,16 @@ function isUnicodeOtherLanguage(str) {
   return false;
 }
 
+function parseEmojis(element) {
+  if (window.twemoji && element) {
+    try {
+      window.twemoji.parse(element, { base: 'emojis/', folder: '', ext: '.svg' });
+    } catch (e) {
+      console.warn('Twemoji parse error:', e);
+    }
+  }
+}
+
 function updateTextAndCheckUnicode(element, text) {
   if (!element) return;
   element.textContent = text;
@@ -34,6 +44,7 @@ function updateTextAndCheckUnicode(element, text) {
   } else {
     element.style.removeProperty('font-family');
   }
+  parseEmojis(element);
 }
 
 // Team colour palette (cycling)
@@ -768,6 +779,8 @@ function updateDashboardStatus() {
       }
     }
   }
+  parseEmojis(statusDiv);
+  parseEmojis(startBtn);
 }
 
 // ============================================================
@@ -989,6 +1002,7 @@ function applyTheme(theme) {
     icon.style.opacity = '0';
     setTimeout(() => {
       icon.textContent = theme === 'light' ? '☀️' : '🌙';
+      parseEmojis(icon);
       icon.style.transform = 'rotate(0deg) scale(1)';
       icon.style.opacity = '1';
     }, 200);
@@ -1300,6 +1314,7 @@ function renderAdminGrid() {
 
     container.appendChild(cell);
   }
+  parseEmojis(container);
 }
 
 
@@ -1628,6 +1643,7 @@ function renderGameBoard() {
     container.appendChild(btn);
   }
   applySelectedFont();
+  parseEmojis(container);
 }
 
 // ============================================================
@@ -1818,6 +1834,10 @@ function updateScoreUI(updatedTeamIndex = -1) {
   }
 
   renderSidebarLeaderboard();
+  parseEmojis(container);
+  if (liveScoreContainer) {
+    parseEmojis(liveScoreContainer);
+  }
 }
 
 function renderSidebarLeaderboard() {
@@ -1850,6 +1870,7 @@ function renderSidebarLeaderboard() {
     `;
     list.appendChild(div);
   });
+  parseEmojis(list);
 }
 
 // ============================================================
@@ -2067,6 +2088,7 @@ function openQuestionModal(cId, q) {
 
   transitionState('AWAITING_FIRST_ANSWER');
   enableModalActionButtons();
+  parseEmojis(overlay);
 }
 
 function closeModal() {
@@ -2694,6 +2716,7 @@ function showEmojiFeedback(isCorrect, q, callback) {
   
   const sticker = document.createElement('div');
   sticker.textContent = emoji;
+  parseEmojis(sticker);
   sticker.style.fontSize = '15rem';
   sticker.style.lineHeight = '1';
   sticker.style.textAlign = 'center';
@@ -2768,6 +2791,7 @@ function showEmojiFeedback(isCorrect, q, callback) {
       renderGameBoard();
       renderAdminGrid();
       enableNextButton();
+      parseEmojis(document.getElementById('modal-overlay'));
     });
   };
 
@@ -2847,6 +2871,7 @@ function showEmojiFeedback(isCorrect, q, callback) {
             renderGameBoard();
             renderAdminGrid();
             enableNextButton();
+            parseEmojis(document.getElementById('modal-overlay'));
           });
         }
       };
@@ -2908,6 +2933,7 @@ function showEmojiFeedback(isCorrect, q, callback) {
             renderGameBoard();
             renderAdminGrid();
             enableNextButton();
+            parseEmojis(document.getElementById('modal-overlay'));
           });
         }
       };
@@ -2931,6 +2957,7 @@ function startStealPhase() {
 
   const turnStatus = document.getElementById('modal-turn-status');
   turnStatus.innerHTML = `❌ Wrong Answer<br><span style="font-size:0.8rem;">Passed to ${playState.teams[playState.currentTeamIndex].name}</span>`;
+  parseEmojis(turnStatus);
   turnStatus.style.color = "var(--color-error)";
   turnStatus.style.borderColor = "var(--color-error)";
   turnStatus.style.textAlign = "center";
@@ -2982,6 +3009,7 @@ function handlePass() {
 
   const turnStatus = document.getElementById('modal-turn-status');
   turnStatus.innerHTML = `⏭️ Passed<br><span style="font-size:0.8rem;">To ${playState.teams[playState.currentTeamIndex].name}</span>`;
+  parseEmojis(turnStatus);
   turnStatus.style.color = "var(--color-gold)";
   turnStatus.style.borderColor = "var(--color-gold)";
   turnStatus.style.textAlign = "center";
@@ -3107,6 +3135,10 @@ function endGame() {
     updateDashboardStatus();
     showScreen('winner');
   }
+  const winnerScreen = document.getElementById('screen-winner');
+  if (winnerScreen) {
+    parseEmojis(winnerScreen);
+  }
 }
 
 // ============================================================
@@ -3165,7 +3197,9 @@ document.getElementById('btn-theme-toggle').addEventListener('click', () => {
 
 document.getElementById('btn-sound-toggle').addEventListener('click', () => {
   soundEnabled = !soundEnabled;
-  document.getElementById('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+  const soundIcon = document.getElementById('sound-icon');
+  soundIcon.textContent = soundEnabled ? '🔊' : '🔇';
+  parseEmojis(soundIcon);
   if (soundEnabled) playSound('click');
 });
 
@@ -3970,6 +4004,7 @@ async function initApp() {
     playState.phase = 'live';
     showScreen('dashboard');
   }
+  parseEmojis(document.body);
 }
 
 // Wait for DOM to be fully ready before calling initApp so every

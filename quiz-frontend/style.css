@@ -3884,5 +3884,15 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
   font-size: 1.15rem !important;
 }
 
+/* Offline Emojis (Twemoji SVGs) styling */
+img.emoji {
+  height: 1.2em;
+  width: 1.2em;
+  margin: 0 0.12em;
+  vertical-align: -0.15em;
+  display: inline-block;
+}
+
+
 
 
