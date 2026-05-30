@@ -2124,7 +2124,7 @@ body {
 
 .team-setup-badge {
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.88rem;
   font-weight: 900;
   padding: 6px 12px;
   border-radius: var(--radius-pill);
@@ -2147,7 +2147,7 @@ body {
   display: block;
   font-family: var(--font-body);
   font-weight: 800;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -2544,8 +2544,8 @@ body {
 .left-sliding-sidebar {
   position: fixed;
   top: 0;
-  left: -500px;
-  width: min(480px, 90vw);
+  left: -420px;
+  width: 400px;
   bottom: 0;
   z-index: 2000;
   background: var(--panel-bg) !important;
@@ -2594,7 +2594,7 @@ body {
 
 .sidebar-title {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.65rem;
   color: var(--color-gold);
   margin: 0;
   letter-spacing: 0.5px;
@@ -2650,7 +2650,7 @@ body {
 
 .sidebar-section-title {
   font-family: var(--font-display);
-  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  font-size: clamp(1.1rem, 2.2vw, 1.35rem);
   color: var(--color-text-light);
   margin: 0 0 4px 0;
   border-bottom: 1.5px solid var(--color-gold);
@@ -2680,7 +2680,7 @@ body {
 
 .sidebar-row-header {
   font-weight: 800;
-  font-size: 0.92rem;
+  font-size: 1.1rem;
   color: var(--color-gold);
   margin-bottom: 8px;
   letter-spacing: 0.3px;
@@ -3321,7 +3321,7 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
   align-items: center;
   padding: 12px 16px !important;
   font-family: var(--font-display) !important;
-  font-size: 0.95rem !important;
+  font-size: 1.15rem !important;
   color: var(--color-text-light) !important;
   cursor: pointer;
   user-select: none;
@@ -3380,7 +3380,7 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
 }
 
 .custom-switch-text {
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--color-text-muted);
   transition: color var(--transition-fast);
@@ -3463,7 +3463,7 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
   border-radius: 10px !important;
   color: var(--input-color) !important;
   padding: 8px 12px !important;
-  font-size: 0.85rem !important;
+  font-size: 1.0rem !important;
   font-family: var(--font-body);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast) !important;
   cursor: pointer;
@@ -3476,7 +3476,7 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
 }
 
 .form-group label {
-  font-size: 0.76rem !important;
+  font-size: 0.92rem !important;
   font-weight: 700 !important;
   color: var(--color-text-muted) !important;
   text-transform: uppercase;
@@ -3498,7 +3498,7 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
 }
 
 .typography-label {
-  font-size: 0.76rem !important;
+  font-size: 0.92rem !important;
   font-weight: 700 !important;
   color: var(--color-text-muted) !important;
   text-transform: uppercase;
@@ -3553,7 +3553,7 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
   border-radius: 10px !important;
   color: var(--input-color) !important;
   padding: 8px 12px !important;
-  font-size: 0.85rem !important;
+  font-size: 1.0rem !important;
   font-family: var(--font-body);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast) !important;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1) !important;
@@ -3613,7 +3613,7 @@ details.control-panel-details summary::-webkit-details-marker { display: none; }
 .left-sliding-sidebar .btn {
   border-radius: 10px !important;
   padding: 8px 12px !important;
-  font-size: 0.8rem !important;
+  font-size: 0.95rem !important;
   font-weight: 700 !important;
   transition: all var(--transition-fast) !important;
   display: inline-flex;
